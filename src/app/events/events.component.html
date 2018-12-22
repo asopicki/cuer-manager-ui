@@ -1,0 +1,9 @@
+<div *ngFor="let event of events">
+  <div>
+    <h2>{{event.name}}</h2>
+
+    <div>Start: <span>{{event.date_start | date:'EEE, MMM d, H:mm' }}</span></div>
+    <div>End: <span>{{event.date_end  | date:'EEE, MMM d, H:mm' }}</span></div>
+  </div>
+</div>
+
