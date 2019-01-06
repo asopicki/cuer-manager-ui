@@ -6,6 +6,8 @@ import { map } from 'rxjs/operators';
 import { Event } from './event';
 import { MessageService } from '../message.service'
 
+import * as moment from 'moment';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +22,6 @@ export class EventService {
 
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
-  /** Log a HeroService message with the MessageService */
   private log(message: string) {
     this.messageService.add(`EventService: ${message}`);
   }
@@ -29,7 +30,10 @@ export class EventService {
    * @TODO: Add support for loading events in a certain range (start date, end date)
    */
   getEvents(): Observable<Event[]> {
-    return this.http.get<Event[]>(this.urls['events'])
+    let start_date =  moment().subtract(1, 'months').toISOString(true);
+    let end_date =  moment().add(3, 'months').toISOString(true);
+
+    return this.http.get<Event[]>(this.urls['events']+'/'+ start_date + '/' + end_date)
       .pipe(map(events => {
         const result = events.map(data => new Event(data));
         return result;
