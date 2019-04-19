@@ -5,6 +5,8 @@ import { Observable, of, EMPTY } from "rxjs";
 import { map, mergeMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 
+import { DateTime } from 'luxon';
+
 import { Event } from '../event';
 import { Tip } from '../tip';
 import { Cuecard } from '../cuecard';
@@ -42,7 +44,6 @@ export class EventDetailsComponent implements OnInit {
     this.loading = true
     this.route.paramMap.subscribe(params => this.getEvent(params.get('uuid') || '').subscribe(event => {
       this.event = event;
-      this.tips = event.getTips();
       this.loading = false;
     }))
   }
@@ -62,9 +63,14 @@ export class EventDetailsComponent implements OnInit {
                     map(program => {
                         result.setProgram(program);
                         if (program) {
-                            this.tipService.getTips(program).subscribe(tips => { if (tips) result.setTips(tips)});
+                            this.tipService.getTips(program).subscribe(tips => { 
+                              if (tips) {
+                                result.setTips(tips);
+                                this.tips = tips;
+                              }
+                            });
                         }
-                        return event;
+                        return result;
                     })
               ).subscribe(_ => {})
               return of(result);
@@ -91,21 +97,55 @@ export class EventDetailsComponent implements OnInit {
   }
 
   addTip(): void {
+    let startDate = DateTime.fromJSDate(this.event.date_start);
+
+    if (this.tips.length > 0) {
+      startDate = DateTime.fromJSDate(this.tips[this.tips.length-1].date_end);
+    }
+
+    let endDate = startDate.plus({minutes: 15});
+
     const dialogRef = this.dialog.open(TipDialogComponent, {
-      data: {name: ''}
+      data: {
+        startTime: startDate.toFormat('HH:mm'), 
+        endTime: endDate.toFormat('HH:mm')
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.debug('The name of the tip is', result);
+      let startDate = DateTime.fromJSDate(this.event.date_start);
+      let startTime = DateTime.fromISO(result.get('startTime').value);      
+      let endTime = DateTime.fromISO(result.get('endTime').value);
 
-      if ( result ) {
-        console.debug('Program ID:', this.event.getProgram().id);
-        console.debug('Start date:', this.event.date_start);
+      startDate = startDate.set({
+        hour: startTime.hour,
+        minute: startTime.minute,
+        second: startTime.second,
+        millisecond: startTime.millisecond
+      });
+      
+      let endDate = startDate.set({
+        hour: endTime.hour,
+        minute: endTime.minute,
+        second: endTime.second,
+        millisecond: endTime.millisecond
+      })
 
-        /*this.tipService.createTip(result).subscribe(tip => {
-          console.debug('Tip created!', tip)
-        });*/
-      }
+      this.tipService.createTip(
+        result.get('name').value, 
+        this.event.getProgram().id,
+        startDate, 
+        endDate).subscribe(_tip => {
+        this.tipService.getTips(this.event.getProgram()).subscribe(tips => {
+          this.event.setTips(tips);
+          this.tips = tips;
+        });
+      });
+
     });
+  }
+
+  addCuecard(tip: Tip): void {
+    console.debug('Adding cuecard to', tip);
   }
 }
