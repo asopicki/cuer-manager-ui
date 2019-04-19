@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-
+import { MatDialog } from '@angular/material';
 
 import { Event } from './event';
-import { EventService } from './event.service'
+import { EventService } from './event.service';
+import { NewEventComponent } from './new-event/new-event.component';
+
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'app-events',
@@ -13,7 +16,7 @@ export class EventsComponent implements OnInit {
 
   events: Event[];
 
-  constructor(private eventService: EventService) { }
+  constructor(private eventService: EventService, private dialog: MatDialog) { }
 
   getEvents() {
     return this.eventService.getEvents()
@@ -24,4 +27,35 @@ export class EventsComponent implements OnInit {
     this.getEvents();
   }
 
+  addEvent() {
+    const dialogRef = this.dialog.open(NewEventComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.debug('Result:', result);
+      let startDate = DateTime.fromJSDate(result.startDate);
+      let startTime = DateTime.fromISO(result.startTime);
+      let endDate = DateTime.fromJSDate(result.endDate);
+      let endTime = DateTime.fromISO(result.endTime);
+      
+      startDate = startDate.set({
+        hour: startTime.hour,
+        minute: startTime.minute,
+        second: startTime.second,
+        millisecond: startTime.millisecond
+      });
+      
+      endDate = endDate.set({
+        hour: endTime.hour,
+        minute: endTime.minute,
+        second: endTime.second,
+        millisecond: endTime.millisecond
+      })
+      console.debug('Start date:', startDate);
+      console.debug('End date:', endDate);
+
+      this.eventService.createEvent(result.name, startDate, endDate).subscribe(event => {
+        this.getEvents();
+      });
+    });
+  }
 }
