@@ -3,9 +3,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 
+import { DateTime } from 'luxon';
+
 import { Event } from './event';
 import { MessageService } from '../message.service'
-import { DateTime } from 'luxon';
 
 const urls = {
   "events": "v2/events",
@@ -29,8 +30,8 @@ export class EventService {
   }
 
   getEvents(): Observable<Event[]> {
-    let start_date =  DateTime.local().minus({months: 1}).toUTC().toISO(); //.utc().subtract(1, 'months').toISOString(true);
-    let end_date =  DateTime.local().plus({months: 3}).toUTC().toISO(); //moment().utc().add(3, 'months').toISOString(true);
+    let start_date =  DateTime.local().minus({months: 1}).toUTC().toISO(); 
+    let end_date =  DateTime.local().plus({months: 3}).toUTC().toISO();
 
     return this.http.get<Event[]>(urls['events']+'/'+ start_date + '/' + end_date)
       .pipe(map(events => {
@@ -57,8 +58,8 @@ export class EventService {
       date_start: startDate.toISO(),
       date_end: endDate.toISO(),
       schedule: null,
-      date_created: DateTime.utc().toISO(), //moment().utc().toISOString(),
-      date_modified: DateTime.utc().toISO() // moment().utc().toISOString()
+      date_created: DateTime.utc().toISO(), 
+      date_modified: DateTime.utc().toISO() 
     }
 
     console.debug('Creating event:', event);

@@ -15,6 +15,7 @@ import { ProgramService } from "../program.service";
 import { TipService } from "../tip.service";
 import { Program } from '../program';
 import { TipDialogComponent } from './tip-dialog/tip-dialog.component';
+import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.component';
 
 
 const urls = {
@@ -113,6 +114,10 @@ export class EventDetailsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+
       let startDate = DateTime.fromJSDate(this.event.date_start);
       let startTime = DateTime.fromISO(result.get('startTime').value);      
       let endTime = DateTime.fromISO(result.get('endTime').value);
@@ -145,7 +150,41 @@ export class EventDetailsComponent implements OnInit {
     });
   }
 
+  removeTip(tip: Tip): void {
+    console.debug('Removing tip', tip);
+
+    this.tipService.removeTip(tip.uuid).subscribe(_ => {
+      this.updateTips(this.event.getProgram())
+    })
+  }
+
   addCuecard(tip: Tip): void {
     console.debug('Adding cuecard to', tip);
+
+    const dialogRef = this.dialog.open(SearchDialogComponent);
+
+    dialogRef.afterClosed().subscribe(cuecard => {
+      console.debug('Selected cuecard', cuecard);
+      if (cuecard) {
+        this.tipService.addCuecard(tip.uuid, cuecard.uuid).subscribe(_ => {
+          this.updateTips(this.event.getProgram())
+        })
+      }
+      console.debug('Search closed');
+    })
+  }
+
+  removeCuecard(tip: Tip, cuecard: Cuecard): void {
+    console.debug('Removing cuecard', cuecard, 'from tip', tip);
+
+    this.tipService.removeCuecard(tip.uuid, cuecard.uuid).subscribe(_ => {
+      this.updateTips(this.event.getProgram())
+    })
+  }
+
+  updateTips(program: Program) {
+    this.tipService.getTips(program).subscribe(tips => {
+      if (tips) this.tips = tips
+    })
   }
 }

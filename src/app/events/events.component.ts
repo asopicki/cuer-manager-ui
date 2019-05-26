@@ -53,7 +53,7 @@ export class EventsComponent implements OnInit {
       console.debug('Start date:', startDate);
       console.debug('End date:', endDate);
 
-      this.eventService.createEvent(result.name, startDate, endDate).subscribe(event => {
+      this.eventService.createEvent(result.name, startDate, endDate).subscribe(_ => {
         this.getEvents();
       });
     });

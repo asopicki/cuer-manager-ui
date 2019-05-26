@@ -3,37 +3,43 @@
   Fetching event details....
 </div>
 <div *ngIf="event" class="grid">
-<div class="panel event">
-  <span class="far fa-calendar-check fa-fw"></span>
-  <span class="event-name">{{event?.name}}</span>
-  <div class="textbold">Start: <span>{{event?.date_start | date:'EEE, MMM d' }}</span></div>
-  <div class="textbold">End: <span>{{event?.date_end  | date:'EEE, MMM d' }}</span></div>
-</div>
-<div class="panel program" *ngIf="program">
-  <span class="fa fa-tasks fa-fw"></span>
-  <span class="program-name">Program (Last updated: {{program.date_modified | date:'EEE, MMM d, H:mm'}}</span>
-
-  <p class="program notes" [innerHtml]="program.notes"></p>
-</div>
-<div>
-  <i class="far fa-plus-square" (click)="addTip()" title="Add new tip"></i>
-</div>
-<div class="panel tip" *ngFor="let tip of tips;">
-  <span class="fa fa-list-ol fa-fw"></span>
-  <span class="tip-name">{{tip.name}} ({{tip.date_start | date:'H:mm'}})</span>
-
-  <div>
-      <i class="far fa-plus-square" (click)="addCuecard(tip)" title="Add new cuecard"></i>
+  <div class="panel event">
+    <span class="far fa-calendar-check fa-fw"></span>
+    <span class="event-name">{{event?.name}}</span>
+    <div class="textbold">Start: <span>{{event?.date_start | date:'EEE, MMM d' }}</span></div>
+    <div class="textbold">End: <span>{{event?.date_end  | date:'EEE, MMM d' }}</span></div>
   </div>
-  <ul>
-    <li *ngFor="let cuecard of tip.cuecards">
-      <a href="{{cuecardLink(cuecard)}}" target="_blank">
-        {{cuecard.rhythm}} {{cuecard.phase}}  {{ plusFigures(cuecard) }}
-        <span class="fas fa-external-link-alt fa-fw"></span>
-      </a>
-    </li>
-  </ul>
-</div>
+  <div class="panel program" *ngIf="program">
+    <span class="fa fa-tasks fa-fw"></span>
+    <span class="program-name">Program (Last updated: {{program.date_modified | date:'EEE, MMM d, H:mm'}}</span>
+
+    <p class="program notes" [innerHtml]="program.notes">
+    </p>
+  </div>
+  <div>
+    <i class="far fa-plus-square" (click)="addTip()" title="Add new tip"></i>
+  </div>
+  <div class="tips-container">
+    <div class="panel tip" *ngFor="let tip of tips;">
+      <span class="fa fa-list-ol fa-fw"></span>
+      <span class="tip-name">{{tip.name}} ({{tip.date_start | date:'H:mm'}})</span> 
+      <span class="far fa-minus-square" title="Remove tip" (click)="removeTip(tip)"></span>
+
+      <div>
+          <i class="far fa-plus-square" (click)="addCuecard(tip)" title="Add new cuecard"></i>
+      </div>
+      <ul>
+        <li *ngFor="let cuecard of tip.cuecards">
+          <a href="{{cuecardLink(cuecard)}}" target="_blank" title="Open cuecard in new tab">
+            {{cuecard.title}} -
+            {{cuecard.rhythm}} {{cuecard.phase}}  {{ plusFigures(cuecard) }}
+            <span class="fas fa-external-link-alt fa-fw"></span>
+          </a>
+          <span class="far fa-minus-square" (click)="removeCuecard(tip, cuecard)"></span>
+        </li>
+      </ul>
+    </div>
+  </div>
 
 </div>
 <div *ngIf="!loading && !event">

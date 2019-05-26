@@ -10,11 +10,36 @@ import { Tip } from './tip';
 
 const urls = {
   "tips_program": "v2/tips/",
-  "new_tip": "v2/tips"
+  "new_tip": "v2/tips",
+  "tip_cuecard": "/v2/tip_cuecard",
 };
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+}
+
+class FormTip {
+  name: string
+	program_id: number
+	date_start: string
+  date_end: string
+  
+  constructor(name: string, program_id: number, date_start: string, date_end: string) {
+    this.name = name;
+    this.program_id = program_id;
+    this.date_start = date_start;
+    this.date_end = date_end;
+  }
+}
+
+class FormTipCuecard {
+  tip_uuid: String
+  cuecard_uuid: String
+
+  constructor(tip_uuid: String, cuecard_uuid: String) {
+    this.tip_uuid = tip_uuid;
+    this.cuecard_uuid = cuecard_uuid;
+  }
 }
 
 @Injectable({
@@ -42,18 +67,40 @@ export class TipService {
 
     console.debug('Start date:', startDate);
 
-    let tip = {
-      name: name,
-      program_id: program_id,
-      date_start:  startDate.toUTC().toISO(),
-      date_end: endDate.toUTC().toISO(),
-    }
+    let tip = new FormTip(name, program_id, startDate.toUTC().toISO(), endDate.toUTC().toISO());
 
     console.debug('Creating tip:', tip);
 
     return this.http.put(urls['new_tip'], tip, httpOptions).pipe(
-      tap((result) => console.log('Tip created!')),
+      tap((_) => console.debug('Tip created!')),
       catchError(this.handleError<void>('createTip'))
+    );
+  }
+
+  removeTip(tip_uuid: String): Observable<any> {
+    var url = `/v2/tips/${tip_uuid}`;
+
+    return this.http.delete(url, httpOptions).pipe(
+      tap((_) => console.debug('Tip removed!')),
+      catchError(this.handleError<void>('removeTip'))
+    );
+  }
+
+  addCuecard(tip_uuid: String, cuecard_uuid: String): Observable<any> {
+    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid);
+
+    return this.http.put(urls['tip_cuecard'], formTipCuecard, httpOptions).pipe(
+      tap((_) => console.debug('Cuecard added!')),
+      catchError(this.handleError<void>('addCuecard'))
+    );
+  }
+
+  removeCuecard(tip_uuid: String, cuecard_uuid: String): Observable<any> {
+    var url = `/v2/tips/${tip_uuid}/cuecard/${cuecard_uuid}`;
+    
+    return this.http.delete(url, httpOptions).pipe(
+      tap((_) => console.debug('Cuecard removed!')),
+      catchError(this.handleError<void>('removeCuecard'))
     );
   }
 
