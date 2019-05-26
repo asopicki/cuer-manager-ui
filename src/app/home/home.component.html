@@ -1,4 +1,7 @@
 <h3>Next events</h3>
+<div>
+  <a (click)="addEvent($event)" ><i class="fas fa-calendar-plus calendar-icon right"></i></a>
+</div>
 <div class="grid">
   <a *ngFor="let event of events" class="col-1-2" routerLink="/events/details/{{event.uuid}}">
     <div class="panel">

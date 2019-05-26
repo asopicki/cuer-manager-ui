@@ -27,11 +27,15 @@ export class EventsComponent implements OnInit {
     this.getEvents();
   }
 
-  addEvent() {
+  addEvent(event: any) {
+    event.preventDefault();
     const dialogRef = this.dialog.open(NewEventComponent);
 
     dialogRef.afterClosed().subscribe(result => {
-      console.debug('Result:', result);
+      if (!result) {
+        return;
+      }
+
       let startDate = DateTime.fromJSDate(result.startDate);
       let startTime = DateTime.fromISO(result.startTime);
       let endDate = DateTime.fromJSDate(result.endDate);

@@ -1,5 +1,5 @@
 <div>
-  <button mat-button name="Create event" (click)="addEvent()">Create event</button>
+  <a (click)="addEvent($event)" ><i class="fas fa-calendar-plus calendar-icon"></i></a>
 </div>
 <div *ngFor="let event of events">
   <div>

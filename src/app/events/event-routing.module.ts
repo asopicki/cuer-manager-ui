@@ -8,13 +8,21 @@ import {
   MatInputModule, 
   MatDialogModule, 
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  NativeDateAdapter,
+  DateAdapter
 } from '@angular/material';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 
 import { EventDetailsComponent } from './event-details/event-details.component';
 import { NewEventComponent } from './new-event/new-event.component';
 import { EventsComponent } from './events.component';
+
+class CustomDateAdapter extends NativeDateAdapter {
+  getFirstDayOfWeek(): number {
+    return 1;
+   }
+}
 
 const routes: Routes = [
   { path: 'events', component: EventsComponent},
@@ -44,6 +52,9 @@ let modules =  [
   exports: [
     ...modules,
     RouterModule
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
