@@ -1,0 +1,116 @@
+import { Component, OnInit } from '@angular/core';
+
+import { SearchService } from '../search.service';
+import { Cuecard } from '../../events/cuecard';
+import { FormControl, FormGroup} from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { FnParam } from '@angular/compiler/src/output/output_ast';
+
+const urls = {
+  'cuecard_data': '/v2/cuecards/'
+};
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.scss']
+})
+export class SearchComponent implements OnInit {
+
+  phases: string[]
+  rhythms: string[]
+  cuecards: Cuecard[]
+  searchForm: FormGroup
+  
+  constructor(private searchService: SearchService) {
+    this.phases = ['II', 'III', 'IV', 'V', 'VI'];
+    this.rhythms = [
+      'Two Step',
+      'Waltz',
+      'Cha-Cha-Cha',
+      'Rumba',
+      'Foxtrot',
+      'Tango',
+      'Bolero',
+      'Mambo',
+      'Quickstep',
+      'Jive',
+      'Slow Two Step',
+      'Samba',
+      'Single Swing',
+      'West Coast Swing',
+      'Paso Doble',
+      'Argentine Tango',
+      'Hesitation Canter Waltz'
+    ]
+    this.cuecards = []
+
+    let titleControl = new FormControl(null);
+    titleControl.valueChanges.pipe(
+      debounceTime(200), distinctUntilChanged()
+    ).subscribe((title: string) => {
+      if (title && title.length > 2) {
+        this.searchTitle(title);
+      }
+    });
+
+    let rhythmControl = new FormControl(null);
+
+    this.searchForm = new FormGroup({
+      title: titleControl,
+      rhythm: rhythmControl
+    });
+  }
+
+  ngOnInit() {
+  }
+
+  searchTitle(title: string) {
+    let collator = Intl.Collator();
+    this.searchService.byTitle(title).subscribe(cuecards => {
+      this.updateCuecards(cuecards, (a: Cuecard, b: Cuecard) => {
+        return collator.compare(a.title.toString(), b.title.toString());
+      });
+    });
+  }
+
+  searchPhase(phase: string) {
+    let collator = Intl.Collator();
+    this.searchService.byPhase(phase).subscribe(cuecards => {
+      this.updateCuecards(cuecards, (a: Cuecard, b: Cuecard) => {
+        if (collator.compare(a.phase.toString(), b.phase.toString()) === 0) {
+          return collator.compare(a.title.toString(), b.title.toString());
+        } else {
+          collator.compare(a.phase.toString(), b.phase.toString());
+        }
+      });
+    })
+  }
+
+  rhythmChanged(event) {
+    if (event.value) {
+      let collator = Intl.Collator();
+      this.searchService.byRhythm(event.value).subscribe(cuecards => {
+        this.updateCuecards(cuecards, (a: Cuecard, b: Cuecard) => {
+          if (collator.compare(a.rhythm.toString(), b.rhythm.toString()) === 0) {
+            return collator.compare(a.title.toString(), b.title.toString());
+          } else {
+            collator.compare(a.rhythm.toString(), b.rhythm.toString());
+          }
+        });
+      });
+    }
+  }
+
+  updateCuecards(cuecards: Cuecard[], sortFunc) {
+    this.cuecards = cuecards.sort(sortFunc);
+  }
+
+  plusFigures(cuecard: Cuecard): String {
+    return cuecard.meta['plusfigures'];
+  }
+
+  cuecardLink(cuecard: Cuecard): String {
+    return urls['cuecard_data'] + cuecard.uuid;
+  }
+}

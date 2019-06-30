@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
+import { SearchRoutingModule } from './search-routing.module';
 
 import {
   MatButtonModule, 
@@ -11,6 +12,7 @@ import {
   MatSelectModule,
   MatDividerModule
 } from '@angular/material';
+import { SearchComponent } from './search/search.component';
 
 let modules =  [
   FormsModule,
@@ -23,14 +25,16 @@ let modules =  [
 ]
 
 @NgModule({
-  declarations: [SearchDialogComponent],
+  declarations: [SearchDialogComponent, SearchComponent],
   imports: [
     ...modules,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SearchRoutingModule
   ],
   exports: [
-    ...modules
+    ...modules,
+    SearchComponent
   ],
   entryComponents: [ SearchDialogComponent ]
 })
