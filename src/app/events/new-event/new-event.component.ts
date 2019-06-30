@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators, ValidationErrors} from '@angular/forms';
 
 import { DateTime } from 'luxon';

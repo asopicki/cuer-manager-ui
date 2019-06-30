@@ -2,16 +2,12 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import {
-  MatButtonModule, 
-  MatFormFieldModule, 
-  MatInputModule, 
-  MatDialogModule, 
-  MatDatepickerModule,
-  MatNativeDateModule,
-  NativeDateAdapter,
-  DateAdapter
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule, NativeDateAdapter, DateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 
 import { EventDetailsComponent } from './event-details/event-details.component';

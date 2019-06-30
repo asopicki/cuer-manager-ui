@@ -4,14 +4,12 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SearchDialogComponent } from './search-dialog/search-dialog.component';
 import { SearchRoutingModule } from './search-routing.module';
 
-import {
-  MatButtonModule, 
-  MatFormFieldModule, 
-  MatInputModule, 
-  MatDialogModule, 
-  MatSelectModule,
-  MatDividerModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { SearchComponent } from './search/search.component';
 
 let modules =  [
