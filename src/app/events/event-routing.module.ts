@@ -15,7 +15,7 @@ import { NewEventComponent } from './new-event/new-event.component';
 import { EventsComponent } from './events.component';
 
 @Injectable()
-class CustomDateAdapter extends NativeDateAdapter {
+export class CustomDateAdapter extends NativeDateAdapter {
   getFirstDayOfWeek(): number {
     return 1;
    }
