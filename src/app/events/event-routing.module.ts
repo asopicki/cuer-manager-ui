@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, Injectable } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -14,6 +14,7 @@ import { EventDetailsComponent } from './event-details/event-details.component';
 import { NewEventComponent } from './new-event/new-event.component';
 import { EventsComponent } from './events.component';
 
+@Injectable()
 class CustomDateAdapter extends NativeDateAdapter {
   getFirstDayOfWeek(): number {
     return 1;
