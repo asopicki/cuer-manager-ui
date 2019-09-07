@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { Observable, of, EMPTY } from "rxjs";
 import { map, mergeMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { DateTime } from 'luxon';
 
@@ -166,7 +167,7 @@ export class EventDetailsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(cuecard => {
       console.debug('Selected cuecard', cuecard);
       if (cuecard) {
-        this.tipService.addCuecard(tip.uuid, cuecard.uuid).subscribe(_ => {
+        this.tipService.addCuecard(tip.uuid, cuecard.uuid, this.tips.length+1).subscribe(_ => {
           this.updateTips(this.event.getProgram())
         })
       }
@@ -186,5 +187,26 @@ export class EventDetailsComponent implements OnInit {
     this.tipService.getTips(program).subscribe(tips => {
       if (tips) this.tips = tips
     })
+  }
+
+  drop(event: CdkDragDrop<Tip>) {
+    let tip = event.container.data;
+    
+    let cuecards = [];
+
+    for (let card of tip.cuecards) {
+      cuecards.push({...card});
+    }
+    moveItemInArray(tip.cuecards, event.previousIndex, event.currentIndex);
+
+    cuecards.forEach((cuecard, index) => {
+      let newIndex = tip.cuecards.findIndex((card: Cuecard) => card.uuid == cuecard.uuid )
+
+      if (index != newIndex) {
+        this.tipService.updateCuecard(tip.uuid, (<Cuecard>cuecard).uuid, newIndex+1).subscribe(_ => {});
+      }
+      
+    })
+    //this.tipService.updateCuecard(tip.uuid, (<Cuecard>cuecard).uuid, tip.cuecards.indexOf(cuecard)+1).subscribe(_ => {});
   }
 }

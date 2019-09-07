@@ -35,10 +35,12 @@ class FormTip {
 class FormTipCuecard {
   tip_uuid: String
   cuecard_uuid: String
+  sort_order: number
 
-  constructor(tip_uuid: String, cuecard_uuid: String) {
+  constructor(tip_uuid: String, cuecard_uuid: String, sort_order: number) {
     this.tip_uuid = tip_uuid;
     this.cuecard_uuid = cuecard_uuid;
+    this.sort_order = sort_order;
   }
 }
 
@@ -86,8 +88,8 @@ export class TipService {
     );
   }
 
-  addCuecard(tip_uuid: String, cuecard_uuid: String): Observable<any> {
-    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid);
+  addCuecard(tip_uuid: String, cuecard_uuid: String, sort_order: number): Observable<any> {
+    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid, sort_order);
 
     return this.http.put(urls['tip_cuecard'], formTipCuecard, httpOptions).pipe(
       tap((_) => console.debug('Cuecard added!')),
@@ -101,6 +103,15 @@ export class TipService {
     return this.http.delete(url, httpOptions).pipe(
       tap((_) => console.debug('Cuecard removed!')),
       catchError(this.handleError<void>('removeCuecard'))
+    );
+  }
+
+  updateCuecard(tip_uuid: String, cuecard_uuid: String, sort_order: number): Observable<any> {
+    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid, sort_order);
+
+    return this.http.post(urls['tip_cuecard'], formTipCuecard, httpOptions).pipe(
+      tap((_) => console.debug('Cuecard updated!')),
+      catchError(this.handleError<void>('updateCuecard'))
     );
   }
 

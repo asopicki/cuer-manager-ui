@@ -28,8 +28,8 @@
       <div>
           <i class="far fa-plus-square" (click)="addCuecard(tip)" title="Add new cuecard"></i>
       </div>
-      <ul>
-        <li *ngFor="let cuecard of tip.cuecards">
+      <ul class="cuecard-list" cdkDropList (cdkDropListDropped)="drop($event)" [cdkDropListData]="tip">
+        <li *ngFor="let cuecard of tip.cuecards" class="cuecard-item" cdkDrag [cdkDragData]="cuecard">
           <a href="{{cuecardLink(cuecard)}}" target="_blank" title="Open cuecard in new tab">
             {{cuecard.title}} -
             {{cuecard.rhythm}} {{cuecard.phase}}  {{ plusFigures(cuecard) }}

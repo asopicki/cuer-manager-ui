@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 import { EventsComponent } from './events.component';
 import { EventDetailsComponent } from './event-details/event-details.component';
 import { NewEventComponent } from './new-event/new-event.component';
@@ -16,7 +18,8 @@ import { SearchModule } from '../search/search.module';
     CommonModule,
     EventRoutingModule,
     ReactiveFormsModule,
-    SearchModule
+    SearchModule,
+    DragDropModule
   ],
   exports: [
     EventsComponent
