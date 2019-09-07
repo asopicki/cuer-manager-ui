@@ -1,6 +1,12 @@
 {
   "name": "cuer-manager-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "author": {
+    "name": "Alexander Sopicki"
+  },
+  "description": "Web frontend for managing Round dance events and the programming required for that",
+  "bugs": "https://github.com/asopicki/cuer-manager-ui/issues",
+  "homepage": "https://github.com/asopicki/cuer-manager-ui",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
