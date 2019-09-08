@@ -14,4 +14,7 @@ export class MessagesComponent implements OnInit {
   ngOnInit() {
   }
 
+  messages() {
+    return this.messageService.messages;
+  }
 }
