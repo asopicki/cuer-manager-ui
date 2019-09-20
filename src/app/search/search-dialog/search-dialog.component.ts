@@ -87,7 +87,7 @@ export class SearchDialogComponent implements OnInit {
   }
 
   updateCuecards(cuecards: Cuecard[]) {
-    this.cuecards = cuecards;
+    this.cuecards = cuecards.sort((a, b) => a.title.localeCompare(b.title.toString()));
     if (cuecards) {
       this.cuecard.setValue(this.cuecards[0])
     }
