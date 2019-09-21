@@ -4,7 +4,6 @@ import { SearchService } from '../search.service';
 import { Cuecard } from '../../events/cuecard';
 import { FormControl, FormGroup} from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FnParam } from '@angular/compiler/src/output/output_ast';
 
 const urls = {
   'cuecard_data': '/v2/cuecards/'
@@ -112,5 +111,9 @@ export class SearchComponent implements OnInit {
 
   cuecardLink(cuecard: Cuecard): String {
     return urls['cuecard_data'] + cuecard.uuid;
+  }
+
+  open(cuecard: Cuecard) {
+    window.open(this.cuecardLink(cuecard).toString(), "_blank");
   }
 }

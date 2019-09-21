@@ -25,7 +25,7 @@
 </div>
 
 <div id="search-result">
-  <div *ngFor="let cuecard of cuecards" class="panel">
+  <div *ngFor="let cuecard of cuecards" class="panel" (dblclick)="open(cuecard)">
     <h4>
       {{cuecard.title}} 
       <a href="{{cuecardLink(cuecard)}}" target="_blank" title="Open cuecard in new tab">

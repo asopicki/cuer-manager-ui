@@ -5,6 +5,7 @@ export class Program {
     uuid: String;
     notes: String;
     event: Event;
+    date_modified: String | Date
 
     constructor(data: any, event: Event) {
         Object.assign(this, data);
