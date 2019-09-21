@@ -11,9 +11,10 @@
   </div>
   <div class="panel program" *ngIf="program">
     <span class="fa fa-tasks fa-fw"></span>
-    <span class="program-name">Program (Last updated: {{program.date_modified | date:'EEE, MMM d, H:mm'}}</span>
+    <span class="program-name">Program (Last updated: {{event?.program?.date_modified | date:'EEE, MMM d, H:mm'}})</span>
+    <span class="fa fa-edit fa-fw" (click)="edit(event)"></span>
 
-    <p class="program notes" [innerHtml]="program.notes">
+    <p class="program notes" [innerHtml]="event?.program?.notes">
     </p>
   </div>
   <div>

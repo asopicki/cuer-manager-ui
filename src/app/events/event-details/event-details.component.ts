@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of, EMPTY } from "rxjs";
-import { map, mergeMap } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
+import { map, mergeMap, catchError } from 'rxjs/operators';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { DateTime } from 'luxon';
@@ -16,6 +16,7 @@ import { ProgramService } from "../program.service";
 import { TipService } from "../tip.service";
 import { Program } from '../program';
 import { TipDialogComponent } from './tip-dialog/tip-dialog.component';
+import { NotesEditorComponent } from './notes-editor/notes-editor.component';
 import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.component';
 
 
@@ -96,6 +97,26 @@ export class EventDetailsComponent implements OnInit {
     }
 
     return null;
+  }
+
+  edit(event: Event) {
+    if (event) {
+      this.programService.getNotes(event).subscribe((notes) => {
+        const dialogRef = this.dialog.open(NotesEditorComponent, {
+          data: {
+            notes: notes
+          },
+          height: '720px',
+          width: '800px'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          this.programService.updateNotes(event.program, result.notes).subscribe(
+            notes => event.program.notes = notes
+          )
+        })
+      })
+    }
   }
 
   addTip(): void {

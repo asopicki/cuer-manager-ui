@@ -31,6 +31,7 @@
     "luxon": "^1.16.0",
     "ngx-material-timepicker": "^3.3.1",
     "rxjs": "~6.5.3",
+    "tui-editor": "^1.4.6",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
