@@ -27,6 +27,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/tui-editor/dist/tui-editor.min.css",
               "src/styles.scss"
             ],
             "scripts": []

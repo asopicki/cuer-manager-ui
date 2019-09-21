@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators'; //tap
 
@@ -7,8 +7,12 @@ import { OptionalProgram, Program } from './program';
 import { Event } from './event';
 import { MessageService } from '../message.service';
 
+import { DateTime } from 'luxon';
+
 const urls = {
-  "program_event": "v2/event/program/"
+  "program_event": "v2/event/program/",
+  "program_notes": "v2/event/program/notes/",
+  "program_update_notes": "v2/program/"
 };
 
 const httpOptions = {
@@ -34,6 +38,26 @@ export class ProgramService {
     } else {
       return of(null);
     }
+  }
+
+  getNotes(event: Event): Observable<string> {
+    return this.http.get(urls['program_notes'] + event.getId(), {responseType:'text'})
+      .pipe(
+        map(data => data),
+        catchError(this.handleError<string>('getNotes', ''))
+      )
+      
+  }
+
+  updateNotes(program: Program, notes: String): Observable<String> {
+    const data = {
+      notes: notes,
+      date_modified: DateTime.utc().toISO()
+    }
+    return this.http.post<String>(urls['program_update_notes'] + program.id + '/notes', data)
+      .pipe(
+        catchError(this.handleError<String>('updateNotes', notes))
+      )
   }
 
   private log(message: string) {
