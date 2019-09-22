@@ -40,9 +40,6 @@ export class NotesEditorComponent implements OnInit, AfterContentInit {
   }
 
   onCancelClick(): void {
-    if (this.editor) {
-      this.editor.remove();
-    }
     this.dialogRef.close();
   }
 
