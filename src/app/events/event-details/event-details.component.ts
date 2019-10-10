@@ -21,7 +21,7 @@ import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.
 
 
 const urls = {
-  'cuecard_data': '/v2/cuecards/'
+  'cuecard_data': '/cuecard/'
 };
 
 @Component({

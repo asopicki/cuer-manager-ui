@@ -6,7 +6,7 @@ import { FormControl, FormGroup} from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 const urls = {
-  'cuecard_data': '/v2/cuecards/'
+  'cuecard_data': '/cuecard/'
 };
 
 @Component({
