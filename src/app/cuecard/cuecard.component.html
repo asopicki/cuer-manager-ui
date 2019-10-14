@@ -1,1 +1,11 @@
+<div id="player">
+    <button (click)="play()" [disabled]="playDisabled" >Play</button>
+    <button (click)="stop()" [disabled]="stopDisabled">Stop</button>
+    <div>
+        <input type="range" min="0.1" max="2.0" value="1.0" (oninput)="rateChange()" step="0.1" /> Playbackrate
+    </div>
+    <p>
+        Rate: {{playbackRate}}
+    </p>
+</div>
 <div id="cuecard"></div>
