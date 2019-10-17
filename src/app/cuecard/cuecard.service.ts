@@ -27,4 +27,12 @@ export class CuecardService {
 
     return this.http.get<Blob>('/v2/audio/' + file, httpOptions);
   }
+
+  setMarks(uuid: String, marks: String[]): Observable<String> {
+    let data = {
+      karaoke_marks: JSON.stringify(marks)
+    }
+
+    return this.http.post<String>('/cuecards/' + uuid + '/marks', data);
+  }
 }

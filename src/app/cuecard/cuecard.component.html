@@ -1,11 +1,13 @@
 <div id="player">
     <button (click)="play()" [disabled]="playDisabled" >Play</button>
     <button (click)="stop()" [disabled]="stopDisabled">Stop</button>
-    <div>
-        <input type="range" min="0.1" max="2.0" value="1.0" (oninput)="rateChange()" step="0.1" /> Playbackrate
-    </div>
+
     <p>
-        Rate: {{playbackRate}}
+       <input type="range" name="playbackRate" min="0.5" max="2" [(value)]="playbackRate" step="0.01" 
+       (change)="playRateChange($event)" (dblclick)="resetRate()" />
+       Rate: {{playbackRate}}
     </p>
+    Record cues<input type="checkbox" name="record" [(checked)]="recordCues" (change)="recordCues = !recordCues"/>
+    <button (click)="save()" >Save cue marks</button>
 </div>
-<div id="cuecard"></div>
+<div id="cuecard" style="overflow: hidden;"></div>
