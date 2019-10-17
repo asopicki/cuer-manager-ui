@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { fromEvent } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
 import { CuecardService } from './cuecard.service';
 
 import {PitchShifter} from 'soundtouchjs';
+import { Cuecard } from '../events/cuecard';
+
 
 const CUE_CHAR = "c";
 const PLAY_CHAR = "p";
@@ -17,15 +22,17 @@ const LOAD_CHAR = "l";
 })
 export class CuecardComponent implements OnInit {
 
+  cuecard: Cuecard;
   content: String;
   uuid: String;
 
   audioContext;
   audioBuffer;
   audioSource;
-  playbackRate = 1.0;
+  playbackRate = 100;
   playDisabled = true;
   stopDisabled = true;
+  loadDisabled = false;
   shifter;
   analyser;
   dataArray;
@@ -34,6 +41,8 @@ export class CuecardComponent implements OnInit {
   startPos = 0;
   stride = 32768;
   startTime = 0;
+  trackTime = 0;
+  length = 0;
 
   recordCues = false;
   marks: String[] = [];
@@ -42,22 +51,39 @@ export class CuecardComponent implements OnInit {
   currentP: HTMLElement;
   currentElement = 0;
   currentIndex = 0;
-  fileName;
   
-  constructor(private route: ActivatedRoute, private service: CuecardService) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private service: CuecardService, 
+    private changeDetection: ChangeDetectorRef)  { 
+    
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.uuid = params.get('uuid');
 
       if (this.uuid) {
-        this.service.getCuecard(this.uuid).subscribe(content => {
-          document.getElementById('cuecard').innerHTML = content.toString();
-
-          let node = document.querySelector("#cuecard meta[name='x:audio-file']");
-
-          this.fileName = node.getAttribute('content');
+        this.service.getCuecard(this.uuid).subscribe(cuecard => {
+          this.cuecard = cuecard
+          if (this.cuecard.karaoke_marks) {
+            this.marks = JSON.parse(this.cuecard.karaoke_marks.toString());
+          }
+          if (!this.cuecard.music_file) {
+            this.loadDisabled = true;
+          }
         });
+
+        this.service.getCuecardContent(this.uuid).subscribe(content => {
+          document.getElementById('cuecard').innerHTML = content.toString();
+        });
+
+        let positionElem = document.getElementById('position');
+        let obs = fromEvent(positionElem, 'change');
+        obs.pipe(
+          debounceTime(500),
+          map(value => this.seek(Number.parseInt((<HTMLInputElement>value.target).value)))
+        ).subscribe();
       }
     });
   
@@ -65,11 +91,35 @@ export class CuecardComponent implements OnInit {
   }
 
   load(audioFile: Blob) {
-    let self = this;
     let reader = new FileReader();
-    reader.onload = (event: any) => {
-      console.debug('File load complete')
-      let arrayBufffer = event.target.result;
+    reader.addEventListener('load', this.handleFileLoad.bind(this));
+    reader.readAsArrayBuffer(audioFile);
+  }
+
+  loadMusicFile() {
+    if (this.cuecard && this.cuecard.music_file) {
+      this.service.getAudioFile(this.cuecard.music_file).subscribe(file => this.load(file));
+    }
+  }
+
+  loadExternalFile(e: Event) {
+    let target = <HTMLInputElement>e.target;
+
+    if (target.files.length) {
+      let file = target.files[0];
+
+      console.log(file);
+
+      let reader = new FileReader();
+      reader.addEventListener('load', this.handleFileLoad.bind(this));
+
+      reader.readAsArrayBuffer(file);
+    }
+  }
+
+  handleFileLoad(e: ProgressEvent) {
+    console.debug('File load complete')
+      let arrayBufffer = (<FileReader>e.target).result;
       let audioContext: any = (<any>window).AudioContext || (<any>window).webkitAudioContext;
       let ctx = new audioContext({"latencyHint": "interactive"});
 
@@ -79,17 +129,13 @@ export class CuecardComponent implements OnInit {
       ctx.decodeAudioData(arrayBufffer).then((audioBuffer) => {
         console.debug('Decoded');
         bufferSource.buffer = audioBuffer;
-        self.audioContext = ctx;
-        self.audioSource = bufferSource;
-        self.audioBuffer = audioBuffer;
-        self.playDisabled = false;
-        self.analyser = ctx.createAnalyser();
-        self.analyser.fftSize = 2048;
-        self.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-        self.analyser.connect(ctx.destination);
+        this.audioContext = ctx;
+        this.audioSource = bufferSource;
+        this.audioBuffer = audioBuffer;
+        this.playDisabled = false;
+        this.loadDisabled = true;
+        this.length = Math.trunc(audioBuffer.duration);
       });
-    };
-    reader.readAsArrayBuffer(audioFile);
   }
 
   playRateChange(e: Event) {
@@ -98,31 +144,32 @@ export class CuecardComponent implements OnInit {
   }
 
   resetRate() {
-    this.playbackRate = 1.0;
+    this.playbackRate = 100;
   }
 
   play() {
     if (this.audioSource) {
-      this.shifter = new PitchShifter(this.audioContext, this.audioBuffer, 1024);
-      this.shifter.tempo = this.playbackRate;
+      this.shifter = new PitchShifter(this.audioContext, this.audioBuffer, 1024, this.stop.bind(this));
+      this.shifter.tempo = this.playbackRate / 100;
       this.shifter.pitch = 1.0;
-      this.shifter.connect(this.analyser);
       this.playDisabled = true;
       this.stopDisabled = false;
       this.startTime = this.audioContext.currentTime;
-      this.audioSource.addEventListener('ended', () => {
-        console.log('end of audio');
-        this.stop();
-      });
-
+      this.shifter.connect(this.audioContext.destination);
+      
       if (this.recordCues) {
         this.marks = [];
         document.getElementById('cuecard').focus();
       } else {
+        console.log(this.marks);
         this.karaokeMarks = this.marks.slice();
-        this.karaoke();
+        this.playProgress();
       }
     }
+  }
+
+  seek(position: number) {
+    this.trackTime = position;
   }
 
   stop() {
@@ -187,24 +234,39 @@ export class CuecardComponent implements OnInit {
       event.preventDefault();
       return false;
     } else if (event.key == LOAD_CHAR) {
-      this.service.getAudioFile(this.fileName).subscribe(file => this.load(file));
+      this.loadMusicFile();
     }
-  } 
+  }
+
+  playProgress() {
+    if (this.stopDisabled ) {
+      return;
+    }
+    this.trackTime = Math.trunc(this.audioContext.currentTime - this.startTime);
+    
+    requestAnimationFrame(this.playProgress.bind(this));
+
+    if (this.karaokeMarks) {
+      this.karaoke();
+    }
+  }
 
   karaoke() {
     if (this.stopDisabled || this.recordCues) {
       return;
     }
+    
 
    if (this.karaokeMarks.length > 0) {
-     let markTime = ((this.audioContext.currentTime - this.startTime) * this.playbackRate).toFixed(3);
+     let rate = this.playbackRate / 100;
+     let markTime = ((this.audioContext.currentTime - this.startTime) * rate).toFixed(3);
      if (Number.parseFloat(markTime) > Number.parseFloat(this.karaokeMarks[0])) {
        let mark = this.karaokeMarks.shift();
        this.highlight();
      }
    }
 
-    requestAnimationFrame(this.karaoke.bind(this));
+    
   }
 
   highlight() {

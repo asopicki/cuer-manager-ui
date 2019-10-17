@@ -9,6 +9,8 @@ export class Cuecard {
 	choreographer: String;
 	meta: Object;
 	content: String;
+	karaoke_marks: String;
+	music_file: String;
 
     constructor(data: any) {
         Object.assign(this, data);
