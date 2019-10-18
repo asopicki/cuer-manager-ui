@@ -43,4 +43,10 @@ export class CuecardService {
 
     return this.http.post<String>('/v2/cuecards/' + uuid + '/marks', data);
   }
+
+  refresh(): Observable<void> {
+    let data = "";
+
+    return this.http.post<void>('/v2/cuecards/refresh', data);
+  }
 }

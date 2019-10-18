@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { from } from 'rxjs';
 
-import { EventsComponent } from  './events/events.component';
+import { CuecardService } from './cuecard//cuecard.service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +9,12 @@ import { EventsComponent } from  './events/events.component';
 })
 export class AppComponent {
   title = 'cuer-manager-ui';
+
+  constructor(private service: CuecardService) {
+
+  }
+
+  refresh() {
+    this.service.refresh().subscribe(() => console.log('refresh done'));
+  }
 }
