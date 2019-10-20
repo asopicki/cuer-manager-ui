@@ -34,7 +34,7 @@ export class CuecardService {
       responseType: 'blob' as 'json'
     };
 
-    return this.http.get<Blob>('/v2/audio/' + file, httpOptions);
+    return this.http.get<Blob>('/v2/audio?filename=' + btoa(file.toString()), httpOptions);
   }
 
   setMarks(uuid: String, marks: MarkData): Observable<String> {
