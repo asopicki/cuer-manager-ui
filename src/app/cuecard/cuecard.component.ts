@@ -7,13 +7,18 @@ import { CuecardService } from './cuecard.service';
 
 import {PitchShifter} from 'soundtouchjs';
 import { Cuecard } from '../events/cuecard';
-
+import { MarkData } from './markdata';
 
 const CUE_CHAR = "c";
 const PLAY_CHAR = "p";
 const STOP_CHAR = "s";
 const RECORD_CHAR = "r";
 const LOAD_CHAR = "l";
+
+
+/*
+TODO: Extract player component
+*/
 
 @Component({
   selector: 'app-cuecard',
@@ -42,12 +47,15 @@ export class CuecardComponent implements OnInit {
   stride = 32768;
   startTime = 0;
   trackTime = 0;
+  perc = 0;
   length = 0;
 
   recordCues = false;
   marks: String[] = [];
+  headlines: String[] = [];
   karaokeMarks = [];
 
+  currentH: HTMLElement;
   currentP: HTMLElement;
   currentElement = 0;
   currentIndex = 0;
@@ -67,7 +75,15 @@ export class CuecardComponent implements OnInit {
         this.service.getCuecard(this.uuid).subscribe(cuecard => {
           this.cuecard = cuecard
           if (this.cuecard.karaoke_marks) {
-            this.marks = JSON.parse(this.cuecard.karaoke_marks.toString());
+            let marks = JSON.parse(this.cuecard.karaoke_marks.toString());
+
+            if (Array.isArray(marks)) {
+              this.marks = marks;
+            } else if (typeof(marks) === 'object') {
+              marks = new MarkData(marks);
+              this.marks = marks.marks;
+              this.headlines = marks.headlines;
+            }
           }
           if (!this.cuecard.music_file) {
             this.loadDisabled = true;
@@ -76,14 +92,11 @@ export class CuecardComponent implements OnInit {
 
         this.service.getCuecardContent(this.uuid).subscribe(content => {
           document.getElementById('cuecard').innerHTML = content.toString();
-        });
 
-        let positionElem = document.getElementById('position');
-        let obs = fromEvent(positionElem, 'change');
-        obs.pipe(
-          debounceTime(500),
-          map(value => this.seek(Number.parseInt((<HTMLInputElement>value.target).value)))
-        ).subscribe();
+          let headlines = document.querySelectorAll('#cuecard > h1');
+
+          headlines.forEach(headline => headline.addEventListener('dblclick', this.startAtHeadline.bind(this)));
+        });
       }
     });
   
@@ -124,7 +137,6 @@ export class CuecardComponent implements OnInit {
       let ctx = new audioContext({"latencyHint": "interactive"});
 
       let bufferSource = ctx.createBufferSource();
-      
 
       ctx.decodeAudioData(arrayBufffer).then((audioBuffer) => {
         console.debug('Decoded');
@@ -143,33 +155,91 @@ export class CuecardComponent implements OnInit {
     this.playbackRate = Number.parseFloat(elem.value);
   }
 
+  startAtHeadline(e: Event) {
+    if (!this.headlines) {
+      return true;
+    }
+
+    if (this.playDisabled) {
+      return true;
+    }
+
+    let headline = <HTMLElement>e.target;
+    let headlines = document.querySelectorAll('#cuecard > h1');
+    
+    let i = 1;
+
+    while (i < headlines.length) {
+      let current = headlines.item(i)
+      if (current == headline) {
+        if (i-1 < this.headlines.length) {
+          let markTime = Number.parseFloat(this.headlines[i-1].toString());
+          let perc = markTime / this.length * 100 - 0.5;
+
+          console.log(markTime, perc);
+          if (perc > 0 ) {
+            this.perc = perc;
+          } else {
+            this.perc = 0;
+          }
+        }
+      }
+      i++;
+    }
+
+    e.preventDefault();
+    return false;
+  }
+
+  changePerc(e: Event) {
+    if (this.stopDisabled) {
+      const pos = (<HTMLElement>event.target).getBoundingClientRect();
+      const relX = (<any>event).pageX - (<any>pos).x;
+      const percentage = (relX / (<HTMLElement>event.target).offsetWidth);
+      this.perc = percentage * 100;
+      this.trackTime = this.length * percentage;
+    }
+  }
+
   resetRate() {
     this.playbackRate = 100;
   }
 
   play() {
     if (this.audioSource) {
-      this.shifter = new PitchShifter(this.audioContext, this.audioBuffer, 1024, this.stop.bind(this));
+      this.shifter = new PitchShifter(this.audioContext, this.audioBuffer, 16384, this.stop.bind(this));
       this.shifter.tempo = this.playbackRate / 100;
       this.shifter.pitch = 1.0;
       this.playDisabled = true;
       this.stopDisabled = false;
       this.startTime = this.audioContext.currentTime;
-      this.shifter.connect(this.audioContext.destination);
-      
+
       if (this.recordCues) {
         this.marks = [];
+        this.headlines = [];
         document.getElementById('cuecard').focus();
       } else {
-        console.log(this.marks);
         this.karaokeMarks = this.marks.slice();
-        this.playProgress();
-      }
-    }
-  }
 
-  seek(position: number) {
-    this.trackTime = position;
+        if (this.perc > 0) {
+          while (this.karaokeMarks.length) {
+            let markTime = this.length * this.perc / 100;
+            if (markTime > Number.parseFloat(this.karaokeMarks[0])) {
+              this.karaokeMarks.shift();
+              this.highlight();
+            } else {
+              break;
+            }
+          }
+        }
+      }
+
+      this.shifter.on('play', this.playProgress.bind(this));
+
+      this.shifter.connect(this.audioContext.destination);
+
+      this.shifter.percentagePlayed = this.perc / 100;
+    }
   }
 
   stop() {
@@ -186,6 +256,7 @@ export class CuecardComponent implements OnInit {
 
       if (this.recordCues) {
         console.log(this.marks);
+        console.log(this.headlines);
       }
 
       if (this.currentP) {
@@ -195,30 +266,33 @@ export class CuecardComponent implements OnInit {
       }
 
       this.currentP = null;
+      this.currentH = null;
       this.currentIndex = 0;
       this.currentElement = 0;
+      this.perc = 0;
     }
   }
 
   save() {
-    this.service.setMarks(this.uuid, this.marks).subscribe(() => console.log('marks saved'));
+    let data = new MarkData({marks: this.marks, headlines: this.headlines});
+    this.service.setMarks(this.uuid, data).subscribe(() => console.log('marks saved'));
     return false;
-  }
-
-  incrRate() {
-    this.playbackRate += 0.02;
-  }
-
-  decrRate() {
-    this.playbackRate -= 0.02;
   }
 
   keyup(event) {
     if (this.recordCues && event.key === CUE_CHAR) {
       this.highlight();
 
-      let markTime = this.audioContext.currentTime - this.startTime;
+      let markTime = this.length * this.shifter.percentagePlayed / 100;
       this.marks.push(markTime.toFixed(3));
+
+      let headline = this.getCurrentHeadline();
+      if (this.currentH == null) {
+        this.headlines.push('0.0');
+      } else if (this.currentH != headline) {
+        this.headlines.push(markTime.toFixed(3));
+      }
+      this.currentH = headline;
       event.preventDefault();
       return false;
     } else if (!this.playDisabled && event.key === PLAY_CHAR) {
@@ -238,14 +312,13 @@ export class CuecardComponent implements OnInit {
     }
   }
 
-  playProgress() {
+  playProgress(_) {
     if (this.stopDisabled ) {
       return;
     }
-    this.trackTime = Math.trunc(this.audioContext.currentTime - this.startTime);
+    this.trackTime = this.shifter.percentagePlayed / 100 * this.length;
+    this.perc = this.shifter.percentagePlayed;
     
-    requestAnimationFrame(this.playProgress.bind(this));
-
     if (this.karaokeMarks) {
       this.karaoke();
     }
@@ -255,17 +328,21 @@ export class CuecardComponent implements OnInit {
     if (this.stopDisabled || this.recordCues) {
       return;
     }
-    
 
-   if (this.karaokeMarks.length > 0) {
-     let rate = this.playbackRate / 100;
+    if (this.karaokeMarks.length) {
+     /*let rate = this.playbackRate / 100;
      let markTime = ((this.audioContext.currentTime - this.startTime) * rate).toFixed(3);
      if (Number.parseFloat(markTime) > Number.parseFloat(this.karaokeMarks[0])) {
        let mark = this.karaokeMarks.shift();
        this.highlight();
-     }
-   }
+     }*/
 
+     let markTime = this.length * this.shifter.percentagePlayed / 100;
+     if (markTime > Number.parseFloat(this.karaokeMarks[0])) {
+       this.karaokeMarks.shift();
+       this.highlight();
+     }
+    }
     
   }
 
@@ -316,6 +393,7 @@ export class CuecardComponent implements OnInit {
       if (!this.currentP) {
         return;
       }
+
       //console.log(this.currentP);
 
       //hightlight first cue term if any
@@ -353,6 +431,20 @@ export class CuecardComponent implements OnInit {
     }
 
     this.currentP = <HTMLElement>nodes.item(this.currentElement++);
+  }
+
+  getCurrentHeadline(): HTMLElement | null {
+    let current = <HTMLElement>this.currentP.parentNode;
+
+    while (current.previousSibling) {
+      if (current.previousSibling.nodeName.toLowerCase() === 'h1') {
+        return <HTMLElement>current.previousSibling;
+      }
+
+      current = <HTMLElement>current.previousSibling;
+    }
+
+    return null;
   }
 
   scrollTo(elem: HTMLElement) {

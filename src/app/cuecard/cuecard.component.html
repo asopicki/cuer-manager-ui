@@ -27,9 +27,9 @@
        </datalist>
     </p>
     <p>
-        <input type="range" name="position" min="0" [max]="length" step="1" [value]="trackTime" id="position" disabled="disabled" />
+        <progress id="progressMeter" [value]="perc" max="100" (click)="changePerc($event)"></progress>
 
-        {{trackTime * 1000 | date:'mm:ss'}}
+        {{trackTime * 1000 | date:'mm::ss'}}
         {{length * 1000 | date:'mm:ss'}}
     </p>
     <details>

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Cuecard } from '../events/cuecard';
+import { MarkData } from './markdata';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,7 @@ export class CuecardService {
     return this.http.get<Blob>('/v2/audio/' + file, httpOptions);
   }
 
-  setMarks(uuid: String, marks: String[]): Observable<String> {
+  setMarks(uuid: String, marks: MarkData): Observable<String> {
     let data = {
       karaoke_marks: JSON.stringify(marks)
     }
