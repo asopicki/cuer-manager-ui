@@ -30,11 +30,15 @@ export class CuecardService {
 
   getAudioFile(file: String): Observable<Blob> {
     const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'audio/mp3' }),
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       responseType: 'blob' as 'json'
     };
 
-    return this.http.get<Blob>('/v2/audio?filename=' + btoa(file.toString()), httpOptions);
+    let data = {
+      filename: btoa(file.toString())
+    }
+
+    return this.http.post<Blob>('/v2/audio', data, httpOptions);
   }
 
   setMarks(uuid: String, marks: MarkData): Observable<String> {
