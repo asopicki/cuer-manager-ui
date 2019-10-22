@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { Cuecard } from '../events/cuecard';
 import { MarkData } from './markdata';
+import { Tag } from '../tag';
 
 @Injectable({
   providedIn: 'root'
@@ -53,5 +54,11 @@ export class CuecardService {
     let data = "";
 
     return this.http.post<void>('/v2/cuecards/refresh', data);
+  }
+
+  getTags(uuid: String): Observable<Tag[]> {
+    return this.http.get<Tag[]>("/v2/cuecards/" + uuid + "/tags").pipe(
+      map(tags => tags.map(tag => new Tag(tag)))
+    );
   }
 }

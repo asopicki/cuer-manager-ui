@@ -1,27 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-
-import { SearchService } from '../search.service';
-import { Cuecard } from '../../events/cuecard';
 import { FormControl, FormGroup} from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-const urls = {
-  'cuecard_data': '/cuecard/'
-};
+import { SearchService } from '../search/search.service';
+import { Cuecard } from '../events/cuecard';
 
 @Component({
-  selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  selector: 'app-library',
+  templateUrl: './library.component.html',
+  styleUrls: ['./library.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class LibraryComponent implements OnInit {
 
+  cuecards: Cuecard[]
   phases: string[]
   rhythms: string[]
-  cuecards: Cuecard[]
   searchForm: FormGroup
-  
-  constructor(private searchService: SearchService) {
+
+  constructor(private searchService: SearchService) { 
+    this.cuecards = [];
+
     this.phases = ['II', 'III', 'IV', 'V', 'VI'];
     this.rhythms = [
       'Two Step',
@@ -42,7 +40,6 @@ export class SearchComponent implements OnInit {
       'Argentine Tango',
       'Hesitation Canter Waltz'
     ]
-    this.cuecards = []
 
     let titleControl = new FormControl(null);
     titleControl.valueChanges.pipe(
@@ -59,9 +56,12 @@ export class SearchComponent implements OnInit {
       title: titleControl,
       rhythm: rhythmControl
     });
+
+    this.getCuecards();
   }
 
   ngOnInit() {
+
   }
 
   searchTitle(title: string) {
@@ -105,15 +105,18 @@ export class SearchComponent implements OnInit {
     this.cuecards = cuecards.sort(sortFunc);
   }
 
-  plusFigures(cuecard: Cuecard): String {
-    return cuecard.meta['plusfigures'];
-  }
-
-  cuecardLink(cuecard: Cuecard): String {
-    return cuecard.getLink();
-  }
-
   open(cuecard: Cuecard) {
-    window.open(this.cuecardLink(cuecard).toString(), "_blank");
+    window.open(cuecard.getLink().toString(), "_blank");
+  }
+
+  resetFilter() {
+    this.searchForm.reset();
+    this.getCuecards();
+  }
+
+  getCuecards() {
+    this.searchService.getAll().subscribe(result => {
+      this.updateCuecards(result, (a, b) => a.title.localeCompare(b.title.toString()));
+    })
   }
 }

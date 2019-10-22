@@ -7,7 +7,8 @@ import { Cuecard } from '../events/cuecard';
 import { MessageService } from '../message.service'
 
 const urls = {
-  "search": "v2/search"
+  "search": "v2/search",
+  "all": "v2/cuecards"
 }
 
 const httpOptions = {
@@ -23,6 +24,14 @@ export class SearchService {
 
   private log(message: string) {
     this.messageService.add(`EventService: ${message}`);
+  }
+
+  getAll(): Observable<Cuecard[]> {
+    return this.http.get<Cuecard[]>(urls['all'])
+      .pipe(map(cuecards => {
+        const result = cuecards.map(data => new Cuecard(data));
+        return result;
+    }));
   }
 
   byTitle(title: string): Observable<Cuecard[]> {

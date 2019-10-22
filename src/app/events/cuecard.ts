@@ -15,5 +15,9 @@ export class Cuecard {
     constructor(data: any) {
         Object.assign(this, data);
         this.meta = JSON.parse(data.meta);
-    }
+	}
+	
+	getLink(): String{
+		return '/cuecard/' + this.uuid;
+	}
 }

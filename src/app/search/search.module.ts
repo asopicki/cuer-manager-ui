@@ -11,6 +11,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SearchComponent } from './search/search.component';
+import { MatListModule } from '@angular/material/list';
+import { LibraryModule } from '../library/library.module';
 
 let modules =  [
   FormsModule,
@@ -19,7 +21,9 @@ let modules =  [
   MatDialogModule,
   MatButtonModule,
   MatSelectModule,
-  MatDividerModule
+  MatDividerModule,
+  MatListModule,
+  LibraryModule
 ]
 
 @NgModule({

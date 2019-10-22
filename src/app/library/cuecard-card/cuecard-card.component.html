@@ -1,0 +1,21 @@
+<mat-card class="cuecard">
+    <mat-card-header>
+        <mat-card-title>
+            {{cuecard.title}}
+            <a href="{{cuecard.getLink()}}" target="_blank" title="Open cuecard in new tab">
+                <span class="fas fa-external-link-alt fa-fw"></span>
+            </a>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+            <p>
+                Rhythm: {{cuecard.rhythm}} Phase: {{cuecard.phase}} {{ cuecard.meta['plusfigures'] }}
+            </p>
+            <p>
+                Steplevel: {{cuecard.steplevel}} Choreographer: {{cuecard.choreographer}}
+            </p>
+            <mat-chip-list *ngIf="tags">
+                <mat-chip *ngFor="let tag of tags">{{tag.tag}}</mat-chip>
+            </mat-chip-list>
+    </mat-card-content>
+</mat-card>

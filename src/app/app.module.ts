@@ -10,6 +10,7 @@ import { MessagesComponent } from './messages/messages.component';
 import { HomeComponent } from './home/home.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { UpdateComponent } from './update/update.component';
+import { LibraryModule } from './library/library.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { UpdateComponent } from './update/update.component';
     HttpClientModule,
     EventsModule,
     CuecardModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    LibraryModule
   ],
   providers: [],
   bootstrap: [AppComponent]
