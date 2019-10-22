@@ -9,6 +9,7 @@ import { CuecardModule } from './cuecard/cuecard.module';
 import { MessagesComponent } from './messages/messages.component';
 import { HomeComponent } from './home/home.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { UpdateComponent } from './update/update.component';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     AppComponent,
     MessagesComponent,
     HomeComponent,
+    UpdateComponent,
   ],
   imports: [
     BrowserModule,

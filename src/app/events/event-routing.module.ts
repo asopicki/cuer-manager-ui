@@ -13,6 +13,7 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { EventDetailsComponent } from './event-details/event-details.component';
 import { NewEventComponent } from './new-event/new-event.component';
 import { EventsComponent } from './events.component';
+import { MigrationsGuard } from '../migrations.guard';
 
 @Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
@@ -22,11 +23,12 @@ export class CustomDateAdapter extends NativeDateAdapter {
 }
 
 const routes: Routes = [
-  { path: 'events', component: EventsComponent},
-  { path: 'events/new', component: NewEventComponent },
+  { path: 'events', component: EventsComponent, canActivate: [MigrationsGuard]},
+  { path: 'events/new', component: NewEventComponent, canActivate: [MigrationsGuard] },
   { 
     path: 'events/details/:uuid', 
-    component: EventDetailsComponent
+    component: EventDetailsComponent,
+    canActivate: [MigrationsGuard]
   },
 ];
 
