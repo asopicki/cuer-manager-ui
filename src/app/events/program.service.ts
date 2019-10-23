@@ -11,7 +11,6 @@ import { DateTime } from 'luxon';
 
 const urls = {
   "program_event": "v2/event/program/",
-  "program_notes": "v2/event/program/notes/",
   "program_update_notes": "v2/program/"
 };
 
@@ -41,7 +40,7 @@ export class ProgramService {
   }
 
   getNotes(event: Event): Observable<string> {
-    return this.http.get(urls['program_notes'] + event.getId(), {responseType:'text'})
+    return this.http.get("v2/event/" + event.getId() + "/program/notes", {responseType:'text'})
       .pipe(
         map(data => data),
         catchError(this.handleError<string>('getNotes', ''))
@@ -54,7 +53,7 @@ export class ProgramService {
       notes: notes,
       date_modified: DateTime.utc().toISO()
     }
-    return this.http.post<String>(urls['program_update_notes'] + program.id + '/notes', data)
+    return this.http.post(urls['program_update_notes'] + program.id + '/notes', data, {responseType:'text'})
       .pipe(
         catchError(this.handleError<String>('updateNotes', notes))
       )

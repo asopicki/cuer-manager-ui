@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import {MatListModule} from '@angular/material/list';
 
 import { EventsComponent } from './events.component';
 import { EventDetailsComponent } from './event-details/event-details.component';
@@ -19,6 +20,7 @@ import { NotesEditorComponent } from './event-details/notes-editor/notes-editor.
     CommonModule,
     EventRoutingModule,
     ReactiveFormsModule,
+    MatListModule,
     SearchModule,
     DragDropModule
   ],

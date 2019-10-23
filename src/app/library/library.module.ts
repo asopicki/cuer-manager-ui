@@ -9,10 +9,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 import { LibraryComponent } from './library.component';
 import { LibraryRoutingModule } from './library-routing.module';
 import { CuecardCardComponent } from './cuecard-card/cuecard-card.component';
+import { TagsEditorComponent } from './tags-editor/tags-editor.component';
 
 const modules = [
   ReactiveFormsModule,
@@ -23,16 +25,18 @@ const modules = [
   MatSelectModule,
   MatCardModule,
   MatListModule,
-  MatChipsModule
+  MatChipsModule,
+  MatAutocompleteModule
 ]
 
 @NgModule({
-  declarations: [LibraryComponent, CuecardCardComponent],
+  declarations: [LibraryComponent, CuecardCardComponent, TagsEditorComponent],
   imports: [
     ...modules,
     LibraryRoutingModule,
     CommonModule
   ],
+  entryComponents: [TagsEditorComponent],
   exports: [LibraryComponent, CuecardCardComponent]
 })
 export class LibraryModule { }

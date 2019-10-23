@@ -102,6 +102,7 @@ export class EventDetailsComponent implements OnInit {
   edit(event: Event) {
     if (event) {
       this.programService.getNotes(event).subscribe((notes) => {
+
         const dialogRef = this.dialog.open(NotesEditorComponent, {
           data: {
             notes: notes

@@ -61,4 +61,20 @@ export class CuecardService {
       map(tags => tags.map(tag => new Tag(tag)))
     );
   }
+
+  getAllTags(): Observable<Tag[]> {
+    return this.http.get<Tag[]>("/v2/tags").pipe(
+      map(tags => tags.map(tag => new Tag(tag)))
+    );
+  }
+
+  addTag(tag: Tag, cuecard: Cuecard): Observable<void> {
+    let data = { tag: tag.tag }
+
+    return this.http.post<void>("/v2/cuecards/" + cuecard.uuid + "/tags", data);
+  }
+
+  removeTag(tag: Tag, cuecard: Cuecard): Observable<void> {
+    return this.http.delete<void>("/v2/cuecards/" + cuecard.uuid + "/tag/" + tag.tag);
+  }
 }
