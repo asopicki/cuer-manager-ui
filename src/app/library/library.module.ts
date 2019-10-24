@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 import { LibraryComponent } from './library.component';
 import { LibraryRoutingModule } from './library-routing.module';
@@ -26,7 +28,9 @@ const modules = [
   MatCardModule,
   MatListModule,
   MatChipsModule,
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatBadgeModule,
+  MatTooltipModule
 ]
 
 @NgModule({

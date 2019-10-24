@@ -15,12 +15,24 @@ export class CuecardCardComponent implements OnInit {
   @Input() cuecard: Cuecard
   @Input() tagsedit: boolean
   tags: Tag[]
+  issueCount: number =  0
+  issueDescription: String = ""
+  @Input() showIssues: boolean
 
-  constructor(private service: CuecardService, private dialog: MatDialog) { }
+  constructor(private service: CuecardService, private dialog: MatDialog) { 
+  }
 
   ngOnInit() {
     if (this.cuecard) {
       this.service.getTags(this.cuecard.uuid).subscribe(tags => this.tags = tags)
+
+      if (!this.cuecard.music_file) {
+        this._addIssue("There is no music file associated for this cuecard.");
+      }
+
+      if (!this.cuecard.karaoke_marks) {
+        this._addIssue("There are no karaoke marks available for this cuecard");
+      }
     }
   }
 
@@ -41,4 +53,11 @@ export class CuecardCardComponent implements OnInit {
     })
   }
 
+  _addIssue(description: String) {
+    this.issueCount++;
+
+    if (this.showIssues) {
+      this.issueDescription += description + "\n";
+    }
+  }
 }

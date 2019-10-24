@@ -35,8 +35,12 @@ export class CuecardService {
       responseType: 'blob' as 'json'
     };
 
-    let data = {
+    /*let data = {
       filename: btoa(file.toString())
+    }*/
+
+    let data = {
+      filename: CuecardService._b64EncodeUnicode(file.toString())
     }
 
     return this.http.post<Blob>('/v2/audio', data, httpOptions);
@@ -77,4 +81,16 @@ export class CuecardService {
   removeTag(tag: Tag, cuecard: Cuecard): Observable<void> {
     return this.http.delete<void>("/v2/cuecards/" + cuecard.uuid + "/tag/" + tag.tag);
   }
+
+  
+  private static _b64EncodeUnicode(str: string): string {
+    if (window
+        && "btoa" in window
+        && "encodeURIComponent" in window) {
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+            return String.fromCharCode(("0x" + p1) as any);
+        }));
+    }
+  }
+  
 }
