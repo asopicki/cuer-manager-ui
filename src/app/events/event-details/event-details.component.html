@@ -19,7 +19,7 @@
   <div class="add-tip-control">
     <i class="far fa-plus-square" (click)="addTip()" title="Add new tip"> Add new tip</i>
   </div>
-  <div class="tips-container">
+  <div class="tips-container" cdkDropListGroup>
     <div class="panel tip" *ngFor="let tip of tips;">
       <div class="tip-header">
           <span class="tip-name">{{tip.name}} ({{tip.date_start | date:'H:mm'}} - {{tip.date_end | date:'H:mm'}})</span> 
@@ -29,8 +29,8 @@
               <i class="far fa-plus-square add-new-cuecard" (click)="addCuecard(tip)" title="Add new cuecard"> Add new cuecard</i>
           </div>    
       </div>
-      <mat-list class="cuecard-list">
-          <mat-list-item *ngFor="let cuecard of tip.cuecards" class="cuecard">
+      <mat-list class="cuecard-list" cdkDropList [cdkDropListData]="tip" (cdkDropListDropped)="drop($event)">
+          <mat-list-item *ngFor="let cuecard of tip.cuecards" class="cuecard" cdkDrag [cdkDragData]="cuecard">
                   <app-cuecard-card [cuecard]="cuecard" class="item" [tagsedit]="false"></app-cuecard-card>
           </mat-list-item>
       </mat-list>

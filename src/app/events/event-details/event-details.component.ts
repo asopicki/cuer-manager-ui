@@ -174,7 +174,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   removeTip(tip: Tip): void {
-    console.debug('Removing tip', tip);
+    //console.debug('Removing tip', tip);
 
     this.tipService.removeTip(tip.uuid).subscribe(_ => {
       this.updateTips(this.event.getProgram())
@@ -182,23 +182,23 @@ export class EventDetailsComponent implements OnInit {
   }
 
   addCuecard(tip: Tip): void {
-    console.debug('Adding cuecard to', tip);
+    // console.debug('Adding cuecard to', tip);
 
     const dialogRef = this.dialog.open(SearchDialogComponent);
 
     dialogRef.afterClosed().subscribe(cuecard => {
-      console.debug('Selected cuecard', cuecard);
+      // console.debug('Selected cuecard', cuecard);
       if (cuecard) {
         this.tipService.addCuecard(tip.uuid, cuecard.uuid, this.tips.length+1).subscribe(_ => {
           this.updateTips(this.event.getProgram())
         })
       }
-      console.debug('Search closed');
+      // console.debug('Search closed');
     })
   }
 
   removeCuecard(tip: Tip, cuecard: Cuecard): void {
-    console.debug('Removing cuecard', cuecard, 'from tip', tip);
+    // console.debug('Removing cuecard', cuecard, 'from tip', tip);
 
     this.tipService.removeCuecard(tip.uuid, cuecard.uuid).subscribe(_ => {
       this.updateTips(this.event.getProgram())
@@ -211,24 +211,54 @@ export class EventDetailsComponent implements OnInit {
     })
   }
 
-  drop(event: CdkDragDrop<Tip>) {
-    let tip = event.container.data;
-    
-    let cuecards = [];
+  drop(event: CdkDragDrop<any>) {
+    //Handle move from one tip to another
+    if (event.container !== event.previousContainer) {
+      let previousTip = <Tip>event.previousContainer.data;
+      let tip = <Tip>event.container.data;
+      let cuecard = <Cuecard>event.item.data;
+      // console.log("Moving from index", event.previousIndex, "to index", event.currentIndex);
 
-    for (let card of tip.cuecards) {
-      cuecards.push({...card});
-    }
-    moveItemInArray(tip.cuecards, event.previousIndex, event.currentIndex);
+      //Step 1: add cuecard to it's new location
+      this.tipService.addCuecard(tip.uuid, cuecard.uuid, event.currentIndex+1).subscribe(_ => {
 
-    cuecards.forEach((cuecard, index) => {
-      let newIndex = tip.cuecards.findIndex((card: Cuecard) => card.uuid == cuecard.uuid )
+        //Step 2: Adjust position of the cuecards from the currentIndex onward
+        for(let i = event.currentIndex; i < tip.cuecards.length; i++) {
+          let current = (<Cuecard[]>tip.cuecards)[i];
+          this.tipService.updateCuecard(tip.uuid, current.uuid, i+2).subscribe(_ => {});
+        }
+        //Add cuecard to container
+        tip.cuecards.splice(event.currentIndex,0,cuecard);
+      })
+     
+      //Step 3: remove cuecard from it's previous location
+      this.tipService.removeCuecard(previousTip.uuid, cuecard.uuid).subscribe(_ => {
+        //Step 4: Adjust position of the cuecards after the previousIndex
+        for(let i = event.previousIndex+1; i < previousTip.cuecards.length; i++) {
+          let current = (<Cuecard[]>previousTip.cuecards)[i];
+          this.tipService.updateCuecard(previousTip.uuid, current.uuid, i).subscribe(_ => {});
+        }
+        //Step 5: Remove the cuecard from the container
+        previousTip.cuecards.splice(event.previousIndex,1);
+      })
 
-      if (index != newIndex) {
-        this.tipService.updateCuecard(tip.uuid, (<Cuecard>cuecard).uuid, newIndex+1).subscribe(_ => {});
+    } else if (event.currentIndex != event.previousIndex) {
+      let tip = <Tip>event.container.data;
+
+      let cuecards = [];
+
+      for (let card of tip.cuecards) {
+        cuecards.push({...card});
       }
-      
-    })
-    //this.tipService.updateCuecard(tip.uuid, (<Cuecard>cuecard).uuid, tip.cuecards.indexOf(cuecard)+1).subscribe(_ => {});
+      moveItemInArray(tip.cuecards, event.previousIndex, event.currentIndex);
+  
+      cuecards.forEach((cuecard, index) => {
+        let newIndex = tip.cuecards.findIndex((card: Cuecard) => card.uuid == cuecard.uuid )
+  
+        if (index != newIndex) {
+          this.tipService.updateCuecard(tip.uuid, (<Cuecard>cuecard).uuid, newIndex+1).subscribe(_ => {});
+        }
+      });
+    }
   }
 }
