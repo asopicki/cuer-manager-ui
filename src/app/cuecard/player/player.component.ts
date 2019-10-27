@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {PitchShifter} from 'soundtouchjs';
 import { Cuecard } from 'src/app/events/cuecard';
 import { CuecardService } from '../cuecard.service';
-
+import { MessageService } from 'src/app/message.service';
 
 export const enum EventType {
   LoadEvent,
@@ -57,7 +57,7 @@ export class PlayerComponent implements OnInit {
   recordCues = false;
 
 
-  constructor(private service: CuecardService) {
+  constructor(private service: CuecardService, private messageService: MessageService) {
     this.percentage = 0;
   }
 
@@ -78,7 +78,10 @@ export class PlayerComponent implements OnInit {
 
   loadMusicFile() {
     if (this.cuecard && this.cuecard.music_file) {
-      this.service.getAudioFile(this.cuecard.music_file).subscribe(file => this.load(file));
+      this.service.getAudioFile(this.cuecard.music_file).subscribe(
+        file => { this.load(file); this.messageService.info("Music file loaded successfully.")},
+        (_) => this._logError("Audio file not found!")
+      );
     }
   }
 
@@ -215,5 +218,9 @@ export class PlayerComponent implements OnInit {
 
     let type = (this.recordCues) ? EventType.RecordStartEvent : EventType.RecordStopEvent;
     this.stateChanged.emit(new PlayerEvent(type));
+  }
+
+  _logError(message: String) {
+    this.messageService.error(`CuecardService: ${message}`);
   }
 }

@@ -5,7 +5,8 @@ import { map, catchError } from 'rxjs/operators'; //tap
 
 import { OptionalProgram, Program } from './program';
 import { Event } from './event';
-import { MessageService } from '../message.service';
+import { MessageService  } from '../message.service';
+import { Message, MessageType } from '../message';
 
 import { DateTime } from 'luxon';
 
@@ -60,7 +61,9 @@ export class ProgramService {
   }
 
   private log(message: string) {
-    this.messageService.add(`ProgramService: ${message}`);
+    let msg = new Message(MessageType.ErrorMessage, `ProgramService: ${message}`)
+
+    this.messageService.add(msg);
   }
 
   /**

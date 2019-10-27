@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-
-import { MessageService } from '../message.service';
+import { Component, OnInit, Inject } from '@angular/core';
+import {MAT_SNACK_BAR_DATA} from '@angular/material';
+import { Message, MessageType } from '../message';
 
 @Component({
   selector: 'app-messages',
@@ -9,12 +9,28 @@ import { MessageService } from '../message.service';
 })
 export class MessagesComponent implements OnInit {
 
-  constructor(private messageService: MessageService) { }
+  message: Message
+  iconClass: String
 
-  ngOnInit() {
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {
+    this.message = <Message>data.message;
+
+    switch(this.message.type) {
+      case MessageType.ErrorMessage: {
+        this.iconClass = "fas fa-exclamation-circle error";
+        break;
+      }
+      case MessageType.WarningMessage: {
+        this.iconClass = "fas fa-exclamation-triangle warning";
+        break;
+      }
+      default: {
+        this.iconClass = "fas fa-info-circle info";
+        break;
+      }
+    }
   }
 
-  messages() {
-    return this.messageService.messages;
+  ngOnInit() {
   }
 }

@@ -4,7 +4,8 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Cuecard } from '../events/cuecard';
-import { MessageService } from '../message.service'
+import { MessageService } from '../message.service';
+import { Message, MessageType } from '../message';
 
 const urls = {
   "search": "v2/search",
@@ -23,7 +24,9 @@ export class SearchService {
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
   private log(message: string) {
-    this.messageService.add(`EventService: ${message}`);
+    let msg = new Message(MessageType.ErrorMessage, `EventService: ${message}`);
+
+    this.messageService.add(msg);
   }
 
   getAll(): Observable<Cuecard[]> {

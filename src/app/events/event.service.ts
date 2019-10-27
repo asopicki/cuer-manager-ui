@@ -6,7 +6,8 @@ import { map, tap, catchError } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 
 import { Event } from './event';
-import { MessageService } from '../message.service'
+import { MessageService } from '../message.service';
+import { Message, MessageType } from '../message';
 
 const urls = {
   "events": "v2/events",
@@ -26,7 +27,8 @@ export class EventService {
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
   private log(message: string) {
-    this.messageService.add(`EventService: ${message}`);
+    let msg = new Message(MessageType.ErrorMessage, `EventService: ${message}`);
+    this.messageService.add(msg);
   }
 
   getEvents(): Observable<Event[]> {

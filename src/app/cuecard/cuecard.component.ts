@@ -6,6 +6,7 @@ import { PlayerEvent, EventType, PlayerComponent } from './player/player.compone
 
 import { Cuecard } from '../events/cuecard';
 import { MarkData } from './markdata';
+import { MessageService } from '../message.service';
 
 const CUE_CHAR = "c";
 
@@ -34,7 +35,11 @@ export class CuecardComponent implements OnInit, AfterViewInit {
   currentElement = 0;
   currentIndex = 0;
   
-  constructor(private route: ActivatedRoute, private service: CuecardService, private changeDetection: ChangeDetectorRef)  { 
+  constructor(
+    private route: ActivatedRoute, 
+    private service: CuecardService, 
+    private changeDetection: ChangeDetectorRef,
+    private messageService: MessageService)  { 
     
   }
 
@@ -56,9 +61,8 @@ export class CuecardComponent implements OnInit, AfterViewInit {
               this.headlines = marks.headlines;
             }
           }
-          /*if (!this.cuecard.music_file) {
-            this.loadDisabled = true;
-          }*/
+        }, (_) => {
+          this._logError("Unable to load cuecard!");
         });
 
         this.service.getCuecardContent(this.uuid).subscribe(content => {
@@ -67,6 +71,8 @@ export class CuecardComponent implements OnInit, AfterViewInit {
           let headlines = document.querySelectorAll('#cuecard > h1');
 
           headlines.forEach(headline => headline.addEventListener('dblclick', this.startAtHeadline.bind(this)));
+        }, (_) => {
+          this._logError("Unable to load cuecard content.");
         });
       }
     });
@@ -146,7 +152,7 @@ export class CuecardComponent implements OnInit, AfterViewInit {
         this.perc = event.progress;
         
         if (!this.recording && this.karaokeMarks) {
-          // this.karaoke();
+          this.karaoke();
         }
         break;
       }
@@ -211,7 +217,11 @@ export class CuecardComponent implements OnInit, AfterViewInit {
 
   save() {
     let data = new MarkData({marks: this.marks, headlines: this.headlines});
-    this.service.setMarks(this.uuid, data).subscribe(() => console.log('marks saved'));
+    this.service.setMarks(this.uuid, data).subscribe(
+      () => this.messageService.info("Cues have been saved."), 
+      (_) => {
+        this._logError("Saving marks failed!");
+    });
     return false;
   }
 
@@ -228,12 +238,8 @@ export class CuecardComponent implements OnInit, AfterViewInit {
 
   highlight() {
     if (this.currentP) {
-      //console.log(this.currentP);
-
       let text = this.currentP.innerText;
-
       let parts = text.split(';');
-      //console.log(parts);
 
       while (true) {
         if (this.currentIndex >= parts.length) {
@@ -273,8 +279,6 @@ export class CuecardComponent implements OnInit, AfterViewInit {
       if (!this.currentP) {
         return;
       }
-
-      //console.log(this.currentP);
 
       //hightlight first cue term if any
       let text = (<HTMLElement>this.currentP).innerText;
@@ -333,5 +337,9 @@ export class CuecardComponent implements OnInit, AfterViewInit {
     } else {
       elem.scrollIntoView({"behavior": "auto", "block": "center", "inline": "center"});
     }
+  }
+
+  _logError(message: String) {
+    this.messageService.error(`CuecardService: ${message}`);
   }
 }

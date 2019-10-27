@@ -5,7 +5,8 @@ import { map, catchError, tap } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 
 import { Program } from './program';
-import { MessageService } from '../message.service';
+import { MessageService  } from '../message.service';
+import { Message, MessageType } from '../message';
 import { Tip } from './tip';
 
 const urls = {
@@ -116,7 +117,8 @@ export class TipService {
   }
 
   private log(message: string) {
-    this.messageService.add(`ProgramService: ${message}`);
+    let msg = new Message(MessageType.ErrorMessage, `TipService: ${message}`)
+    this.messageService.add(msg);
   }
 
   /**

@@ -12,7 +12,7 @@ import { Tag } from '../tag';
 })
 export class CuecardService {
 
-  constructor(private http: HttpClient,) { }
+  constructor(private http: HttpClient) { }
 
   getCuecard(uuid: String): Observable<Cuecard> {
     return this.http.get<Cuecard>('/v2/cuecards/' + uuid).pipe(
@@ -34,10 +34,6 @@ export class CuecardService {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       responseType: 'blob' as 'json'
     };
-
-    /*let data = {
-      filename: btoa(file.toString())
-    }*/
 
     let data = {
       filename: CuecardService._b64EncodeUnicode(file.toString())
