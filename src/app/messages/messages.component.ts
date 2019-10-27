@@ -1,11 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {MAT_SNACK_BAR_DATA} from '@angular/material';
+import {MAT_SNACK_BAR_DATA, MatSnackBarContainer} from '@angular/material';
 import { Message, MessageType } from '../message';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
-  styleUrls: ['./messages.component.scss']
+  styleUrls: ['./messages.component.scss'],
+  entryComponents: [MatSnackBarContainer]
 })
 export class MessagesComponent implements OnInit {
 

@@ -22,6 +22,7 @@ import { LibraryModule } from './library/library.module';
     UpdateComponent,
   ],
   imports: [
+    MatSnackBarModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
@@ -31,6 +32,7 @@ import { LibraryModule } from './library/library.module';
     LibraryModule
   ],
   providers: [MatSnackBar],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [MessagesComponent]
 })
 export class AppModule { }
