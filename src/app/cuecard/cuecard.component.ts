@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { CuecardService } from './cuecard.service';
@@ -19,7 +19,6 @@ export class CuecardComponent implements OnInit, AfterViewInit {
   @ViewChild(PlayerComponent, {static: true})
   private playerComponent: PlayerComponent;
   cuecard: Cuecard;
-  content: String;
   uuid: String;
   playing = false;
   recording = false;
@@ -35,7 +34,7 @@ export class CuecardComponent implements OnInit, AfterViewInit {
   currentElement = 0;
   currentIndex = 0;
   
-  constructor(private route: ActivatedRoute, private service: CuecardService)  { 
+  constructor(private route: ActivatedRoute, private service: CuecardService, private changeDetection: ChangeDetectorRef)  { 
     
   }
 
@@ -127,7 +126,7 @@ export class CuecardComponent implements OnInit, AfterViewInit {
         this.currentIndex = 0;
         this.currentElement = 0;
         this.perc = 0;
-        this.playerComponent.setPercentage(this.perc);
+        this.changeDetection.detectChanges();
         console.log('stop');
         break;
       }
@@ -147,7 +146,7 @@ export class CuecardComponent implements OnInit, AfterViewInit {
         this.perc = event.progress;
         
         if (!this.recording && this.karaokeMarks) {
-          this.karaoke();
+          // this.karaoke();
         }
         break;
       }

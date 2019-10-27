@@ -109,7 +109,7 @@ export class PlayerComponent implements OnInit {
         this.audioContext = ctx;
         this.audioSource = bufferSource;
         this.audioBuffer = audioBuffer;
-        this.playDisabled = null;
+        this.playDisabled = false;
         this.loadDisabled = true;
         this.length = Math.trunc(audioBuffer.duration);
         let event = new PlayerEvent(EventType.LoadEvent);
@@ -143,7 +143,7 @@ export class PlayerComponent implements OnInit {
       this.shifter.tempo = this.playbackRate / 100;
       this.shifter.pitch = 1.0;
       this.playDisabled = true;
-      this.stopDisabled = null;
+      this.stopDisabled = false;
       this.startTime = this.audioContext.currentTime;
 
       this.shifter.on('play', this.playProgress.bind(this));
@@ -161,6 +161,7 @@ export class PlayerComponent implements OnInit {
 
   stop() {
     if (this.shifter) {
+      
       this.audioSource = null;
       this.shifter.disconnect();
       this.shifter = null;
@@ -168,7 +169,7 @@ export class PlayerComponent implements OnInit {
       this.audioSource = this.audioContext.createBufferSource();
       this.audioSource.buffer = this.audioBuffer;
 
-      this.playDisabled = null;
+      this.playDisabled = false;
       this.stopDisabled = true;
       this.percentage = 0;
       this.trackTime = 0;

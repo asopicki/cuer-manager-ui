@@ -5,8 +5,10 @@
 
         <input type="file" id="external_file" accept="audio/*" (change)="loadExternalFile($event)" />
     </label>
-    <button (click)="play()" [attr.disabled]="playDisabled ? 'disabled' : null" title="Play file (p)"><i class="far fa-play-circle"></i></button>
-    <button (click)="stop()" [attr.disabled]="stopDisabled ? 'disabled' : null" title="Stop playback (s)"><i class="far fa-stop-circle"></i></button>
+    <button (click)="play()" [disabled]="playDisabled" title="Play file (p)" id="play-button"><i class="far fa-play-circle"></i></button>
+    <button (click)="stop()" [disabled]="stopDisabled" title="Stop playback (s)" autocomplete="off" id="stop-button">
+        <i class="far fa-stop-circle"></i>
+    </button>
     <button (click)="save()" title="Save recorded cues"><i class="far fa-save"></i></button>
     <label class="label" for="record">
         Record cues
