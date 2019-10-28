@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Cuecard } from 'src/app/events/cuecard';
 import { CuecardService } from 'src/app/cuecard/cuecard.service';
 import { Tag } from 'src/app/tag';
@@ -14,10 +14,14 @@ export class CuecardCardComponent implements OnInit {
 
   @Input() cuecard: Cuecard
   @Input() tagsedit: boolean
+  @Input() showIssues: boolean
+  @Input() canDelete: boolean = false;
+  @Output() deleted= new EventEmitter<Cuecard>();
+
   tags: Tag[]
   issueCount: number =  0
   issueDescription: String = ""
-  @Input() showIssues: boolean
+  
 
   constructor(private service: CuecardService, private dialog: MatDialog) { 
   }
@@ -51,6 +55,10 @@ export class CuecardCardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(_ => {
       this.service.getTags(this.cuecard.uuid).subscribe(tags => this.tags = tags)
     })
+  }
+
+  remove() {
+    this.deleted.emit(this.cuecard);
   }
 
   _addIssue(description: String) {

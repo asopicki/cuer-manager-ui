@@ -197,7 +197,7 @@ export class EventDetailsComponent implements OnInit {
     })
   }
 
-  removeCuecard(tip: Tip, cuecard: Cuecard): void {
+  removeCuecard(cuecard: Cuecard, tip: Tip): void {
     // console.debug('Removing cuecard', cuecard, 'from tip', tip);
 
     this.tipService.removeCuecard(tip.uuid, cuecard.uuid).subscribe(_ => {

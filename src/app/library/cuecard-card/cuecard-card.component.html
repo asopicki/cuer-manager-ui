@@ -5,6 +5,7 @@
             <a href="{{cuecard.getLink()}}" target="_blank" title="Open cuecard in new tab">
                 <span class="fas fa-external-link-alt fa-fw"></span>
             </a>
+            <span *ngIf="canDelete" class="far fa-minus-square" title="Remove tip" (click)="remove()"></span>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
