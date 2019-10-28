@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { CuecardService } from './cuecard//cuecard.service';
+import { MessageService } from './message.service';
 
 @Component({
   selector: 'app-root',
@@ -10,11 +11,14 @@ import { CuecardService } from './cuecard//cuecard.service';
 export class AppComponent {
   title = 'cuer-manager-ui';
 
-  constructor(private service: CuecardService) {
+  constructor(private service: CuecardService, private messageService: MessageService) {
 
   }
 
   refresh() {
-    this.service.refresh().subscribe(() => console.log('refresh done'));
+    this.service.refresh().subscribe(
+      () => this.messageService.info("Library refresh done."),
+      (_) => this.messageService.error("Library update failed.")
+    );
   }
 }
