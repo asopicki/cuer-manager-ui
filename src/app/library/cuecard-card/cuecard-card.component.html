@@ -19,6 +19,7 @@
                 <mat-chip *ngFor="let tag of tags">{{tag.tag}}</mat-chip>
             </mat-chip-list>
             <span [hidden]="!tagsedit"><i title="add or remove tags" (click)="editTags($event, cuecard)">[tags] </i></span>
+            <span [hidden]="!canEdit"><i title="edit meta data" (click)="onedit()">[edit] </i></span>
             <span [hidden]="!showIssues || issueCount === 0" [matBadge]="issueCount" matBadgePosition="above after" matBadgeOverlap="false"
                 [matBadgeHidden]="!showIssues || issueCount == 0" [matBadgeDescription]="issueDescription" 
                 [matTooltip]="issueDescription" matTooltipPosition="right" > [warnings]</span>

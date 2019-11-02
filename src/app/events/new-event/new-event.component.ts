@@ -41,24 +41,24 @@ export class NewEventComponent implements OnInit {
     }
   }
 
-  get name() {
-    return this.newEventForm.get('name');
+  get name(): FormControl {
+    return <FormControl>this.newEventForm.get('name');
   }
 
-  get startDate() {
-    return this.newEventForm.get('startDate');
+  get startDate(): FormControl {
+    return <FormControl>this.newEventForm.get('startDate');
   }
 
-  get endDate() {
-    return this.newEventForm.get('endDate');
+  get endDate(): FormControl {
+    return <FormControl>this.newEventForm.get('endDate');
   }
 
-  get startTime() {
-    return this.newEventForm.get('startTime');
+  get startTime(): FormControl {
+    return <FormControl>this.newEventForm.get('startTime');
   }
 
-  get endTime() {
-    return this.newEventForm.get('endTime');
+  get endTime(): FormControl {
+    return <FormControl>this.newEventForm.get('endTime');
   }
 
   /*

@@ -261,4 +261,8 @@ export class EventDetailsComponent implements OnInit {
       });
     }
   }
+
+  open(cuecard: Cuecard) {
+    window.open(cuecard.getLink().toString(), "_blank");
+  }
 }

@@ -16,6 +16,8 @@ export class CuecardCardComponent implements OnInit {
   @Input() tagsedit: boolean
   @Input() showIssues: boolean
   @Input() canDelete: boolean = false;
+  @Input() canEdit: boolean = false;
+  @Output() edit = new EventEmitter<Cuecard>();
   @Output() deleted= new EventEmitter<Cuecard>();
 
   tags: Tag[]
@@ -59,6 +61,10 @@ export class CuecardCardComponent implements OnInit {
 
   remove() {
     this.deleted.emit(this.cuecard);
+  }
+
+  onedit() {
+    this.edit.emit(this.cuecard);
   }
 
   _addIssue(description: String) {

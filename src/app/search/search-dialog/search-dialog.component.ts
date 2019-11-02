@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { SearchService } from '../search.service';
 import { Cuecard } from '../../events/cuecard';
+import { rhythms, phases } from '../../shared/rhythms';
 
 @Component({
   selector: 'app-search-dialog',
@@ -20,26 +21,8 @@ export class SearchDialogComponent implements OnInit {
   cuecards: Cuecard[]
 
   constructor(public dialogRef: MatDialogRef<SearchDialogComponent>, private searchService: SearchService) { 
-    this.phases = ['II', 'III', 'IV', 'V', 'VI'];
-    this.rhythms = [
-      'Two Step',
-      'Waltz',
-      'Cha-Cha-Cha',
-      'Rumba',
-      'Foxtrot',
-      'Tango',
-      'Bolero',
-      'Mambo',
-      'Quickstep',
-      'Jive',
-      'Slow Two Step',
-      'Samba',
-      'Single Swing',
-      'West Coast Swing',
-      'Paso Doble',
-      'Argentine Tango',
-      'Hesitation Canter Waltz'
-    ]
+    this.phases = phases;
+    this.rhythms = rhythms;
     this.cuecards = []
 
     let titleControl = new FormControl(null);

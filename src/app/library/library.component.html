@@ -32,7 +32,8 @@
 </details>
 <mat-list class="list">
     <mat-list-item *ngFor="let cuecard of cuecards" class="cuecard">
-            <app-cuecard-card [cuecard]="cuecard" class="item" (dblclick)="open(cuecard)" [tagsedit]="true" [showIssues]="true">
+            <app-cuecard-card [cuecard]="cuecard" class="item" (dblclick)="open(cuecard)" [tagsedit]="true" [showIssues]="true"
+                [canEdit]="true" (edit)="onedit(cuecard)">
             </app-cuecard-card>
     </mat-list-item>
 </mat-list>

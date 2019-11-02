@@ -15,7 +15,7 @@ import { NotesEditorComponent } from './event-details/notes-editor/notes-editor.
 
 @NgModule({
   declarations: [EventsComponent, EventDetailsComponent, NewEventComponent, EventFormComponent, TipDialogComponent, NotesEditorComponent],
-  entryComponents: [TipDialogComponent],
+  entryComponents: [TipDialogComponent, NotesEditorComponent],
   imports: [
     CommonModule,
     EventRoutingModule,
@@ -26,6 +26,6 @@ import { NotesEditorComponent } from './event-details/notes-editor/notes-editor.
   ],
   exports: [
     EventsComponent
-  ]
+  ],
 })
 export class EventsModule { }

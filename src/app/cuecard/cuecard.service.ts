@@ -7,6 +7,17 @@ import { Cuecard } from '../events/cuecard';
 import { MarkData } from './markdata';
 import { Tag } from '../tag';
 
+export class MetaData {
+  choreographer: String
+  phase: String
+  difficulty: String
+  rhythm: String
+  plusfigures: String
+  steplevel: String
+  music: String
+  music_file: String
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -78,6 +89,9 @@ export class CuecardService {
     return this.http.delete<void>("/v2/cuecards/" + cuecard.uuid + "/tag/" + tag.tag);
   }
 
+  saveMetaData(cuecard: Cuecard, metaData: MetaData): Observable<void> {
+    return this.http.post<void>("/v2/cuecards/" + cuecard.uuid + "/metadata", metaData);
+  }
   
   private static _b64EncodeUnicode(str: string): string {
     if (window

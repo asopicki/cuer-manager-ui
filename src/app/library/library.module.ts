@@ -12,11 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { LibraryComponent } from './library.component';
 import { LibraryRoutingModule } from './library-routing.module';
 import { CuecardCardComponent } from './cuecard-card/cuecard-card.component';
 import { TagsEditorComponent } from './tags-editor/tags-editor.component';
+import { MetadataEditorComponent } from './metadata-editor/metadata-editor.component';
 
 const modules = [
   ReactiveFormsModule,
@@ -30,17 +32,18 @@ const modules = [
   MatChipsModule,
   MatAutocompleteModule,
   MatBadgeModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatDialogModule
 ]
 
 @NgModule({
-  declarations: [LibraryComponent, CuecardCardComponent, TagsEditorComponent],
+  declarations: [LibraryComponent, CuecardCardComponent, TagsEditorComponent, MetadataEditorComponent],
   imports: [
     ...modules,
     LibraryRoutingModule,
     CommonModule
   ],
-  entryComponents: [TagsEditorComponent],
+  entryComponents: [TagsEditorComponent, MetadataEditorComponent],
   exports: [LibraryComponent, CuecardCardComponent]
 })
 export class LibraryModule { }

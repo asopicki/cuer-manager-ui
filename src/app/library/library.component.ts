@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup} from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 import { SearchService } from '../search/search.service';
 import { Cuecard } from '../events/cuecard';
+import { MetaDataEditorData, MetadataEditorComponent } from './metadata-editor/metadata-editor.component';
+import { rhythms, phases } from '../shared/rhythms';
+import { MetaData, CuecardService } from '../cuecard/cuecard.service';
+import { MessageService } from '../message.service';
 
 @Component({
   selector: 'app-library',
@@ -17,29 +22,15 @@ export class LibraryComponent implements OnInit {
   rhythms: string[]
   searchForm: FormGroup
 
-  constructor(private searchService: SearchService) { 
+  constructor(
+    private searchService: SearchService, 
+    private dialog: MatDialog,
+    private cuecardService: CuecardService,
+    private messageService: MessageService) { 
     this.cuecards = [];
 
-    this.phases = ['II', 'III', 'IV', 'V', 'VI'];
-    this.rhythms = [
-      'Two Step',
-      'Waltz',
-      'Cha-Cha-Cha',
-      'Rumba',
-      'Foxtrot',
-      'Tango',
-      'Bolero',
-      'Mambo',
-      'Quickstep',
-      'Jive',
-      'Slow Two Step',
-      'Samba',
-      'Single Swing',
-      'West Coast Swing',
-      'Paso Doble',
-      'Argentine Tango',
-      'Hesitation Canter Waltz'
-    ]
+    this.phases = phases;
+    this.rhythms = rhythms;
 
     let titleControl = new FormControl(null);
     titleControl.valueChanges.pipe(
@@ -107,6 +98,47 @@ export class LibraryComponent implements OnInit {
 
   open(cuecard: Cuecard) {
     window.open(cuecard.getLink().toString(), "_blank");
+  }
+
+  onedit(cuecard: Cuecard) {
+    let data = new MetaDataEditorData(cuecard);
+
+    const dialogRef = this.dialog.open(MetadataEditorComponent, {
+      data: data,
+      height: '720px',
+      width: '800px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("dialog closed", "Result: ", result);
+      let data = new MetaData();
+
+      data.choreographer = result.choreographer;
+      data.phase = result.phase;
+      data.difficulty = result.difficulty || null;
+      data.rhythm = result.rhythm;
+      data.plusfigures = result.plusfigures || null;
+      data.steplevel = result.steplevel || null;
+      data.music = result.music || null;
+      data.music_file = result.music_file || null;
+
+      this.cuecardService.saveMetaData(cuecard, data).subscribe(() => {
+        let updated_cuecard = this.cuecards.find(card => card.uuid === cuecard.uuid);
+
+        updated_cuecard.choreographer = result.choreographer;
+        updated_cuecard.phase = result.phase;
+        updated_cuecard.difficulty = result.difficulty;
+        updated_cuecard.rhythm = result.rhythm;
+        updated_cuecard.steplevel = result.steplevel;
+        updated_cuecard.meta['steplevel'] = result.steplevel;
+        updated_cuecard.music_file = result.music_file;
+        updated_cuecard.meta['music'] = result.music;
+        updated_cuecard.meta['plusfigures'] = result.plusfigures;
+        this.messageService.info("Changes have been saved.");
+      }, () => {
+        this.messageService.error("Error saving meta data!");
+      });
+    })
   }
 
   resetFilter() {

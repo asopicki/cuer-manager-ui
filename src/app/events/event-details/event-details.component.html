@@ -32,7 +32,7 @@
       <mat-list class="cuecard-list" cdkDropList [cdkDropListData]="tip" (cdkDropListDropped)="drop($event)">
           <mat-list-item *ngFor="let cuecard of tip.cuecards" class="cuecard" cdkDrag [cdkDragData]="cuecard">
                   <app-cuecard-card [cuecard]="cuecard" class="item" [tagsedit]="false" [canDelete]="true"
-                    (deleted)="removeCuecard(cuecard, tip)"></app-cuecard-card>
+                    (deleted)="removeCuecard(cuecard, tip)" (dblclick)="open(cuecard)"></app-cuecard-card>
           </mat-list-item>
       </mat-list>
     </div>
