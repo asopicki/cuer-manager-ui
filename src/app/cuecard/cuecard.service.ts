@@ -102,5 +102,9 @@ export class CuecardService {
         }));
     }
   }
+
+  cued_at(cuecard: Cuecard): Observable<void> {
+    return this.http.post<void>("/v2/cuecards/" + cuecard.uuid + "/cued_at", "");
+  }
   
 }

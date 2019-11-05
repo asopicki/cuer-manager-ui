@@ -18,6 +18,7 @@ import { Program } from '../program';
 import { TipDialogComponent } from './tip-dialog/tip-dialog.component';
 import { NotesEditorComponent } from './notes-editor/notes-editor.component';
 import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.component';
+import { TipCuecard } from '../tip-cuecard';
 
 
 const urls = {
@@ -97,6 +98,17 @@ export class EventDetailsComponent implements OnInit {
     }
 
     return null;
+  }
+
+  cuedAt(tip: Tip, cuecard: Cuecard): String {
+
+    let i = tip.cuecards.findIndex(c => (<Cuecard>c).uuid === cuecard.uuid);
+
+    if (i >= 0 && tip.tip_cuecards[i]) {
+      return (<TipCuecard>tip.tip_cuecards[i]).cued_at;
+    }
+
+    return ""
   }
 
   edit(event: Event) {

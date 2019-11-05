@@ -30,6 +30,11 @@
         </form>
     </div>
 </details>
+<div>
+    Convert ODT file:
+    <input type="file" id="odtfile" hidden="true" (change)="convertFile($event)">
+    <button mat-raised-button (click)="selectFile()">Convert</button>
+</div>
 <mat-list class="list">
     <mat-list-item *ngFor="let cuecard of cuecards" class="cuecard">
             <app-cuecard-card [cuecard]="cuecard" class="item" (dblclick)="open(cuecard)" [tagsedit]="true" [showIssues]="true"

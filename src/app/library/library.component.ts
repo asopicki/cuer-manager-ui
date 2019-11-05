@@ -9,6 +9,7 @@ import { MetaDataEditorData, MetadataEditorComponent } from './metadata-editor/m
 import { rhythms, phases } from '../shared/rhythms';
 import { MetaData, CuecardService } from '../cuecard/cuecard.service';
 import { MessageService } from '../message.service';
+import { FileConversionService } from './file-conversion.service';
 
 @Component({
   selector: 'app-library',
@@ -26,7 +27,8 @@ export class LibraryComponent implements OnInit {
     private searchService: SearchService, 
     private dialog: MatDialog,
     private cuecardService: CuecardService,
-    private messageService: MessageService) { 
+    private messageService: MessageService,
+    private fileService: FileConversionService) { 
     this.cuecards = [];
 
     this.phases = phases;
@@ -150,5 +152,23 @@ export class LibraryComponent implements OnInit {
     this.searchService.getAll().subscribe(result => {
       this.updateCuecards(result, (a, b) => a.title.localeCompare(b.title.toString()));
     })
+  }
+
+  selectFile() {
+    let file_input = <HTMLInputElement>document.getElementById('odtfile');
+
+    file_input.dispatchEvent(new MouseEvent('click'));
+  }
+
+  convertFile(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    let target = <HTMLInputElement>event.target;
+    
+    if (target.files.length > 0) {
+      let reader = new FileReader();
+      (<any>target.files[0]).arrayBuffer().then((buffer) => this.fileService.convertOdtFile(buffer, target.files[0].name));
+    }
   }
 }

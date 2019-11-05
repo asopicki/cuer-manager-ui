@@ -15,6 +15,9 @@
             <p>
                 Steplevel: {{cuecard.steplevel}} Choreographer: {{cuecard.choreographer}}
             </p>
+            <p class="note" *ngIf="cuedAt">
+                Cued at {{cuedAt | date:'dd.MM.yyyy - HH:mm'}}
+            </p>
             <mat-chip-list *ngIf="tags">
                 <mat-chip *ngFor="let tag of tags">{{tag.tag}}</mat-chip>
             </mat-chip-list>

@@ -37,11 +37,13 @@ class FormTipCuecard {
   tip_uuid: String
   cuecard_uuid: String
   sort_order: number
+  cued_at: String | null
 
-  constructor(tip_uuid: String, cuecard_uuid: String, sort_order: number) {
+  constructor(tip_uuid: String, cuecard_uuid: String, sort_order: number, cued_at: String | null) {
     this.tip_uuid = tip_uuid;
     this.cuecard_uuid = cuecard_uuid;
     this.sort_order = sort_order;
+    this.cued_at = cued_at;
   }
 }
 
@@ -90,7 +92,7 @@ export class TipService {
   }
 
   addCuecard(tip_uuid: String, cuecard_uuid: String, sort_order: number): Observable<any> {
-    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid, sort_order);
+    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid, sort_order, null);
 
     return this.http.put(urls['tip_cuecard'], formTipCuecard, httpOptions).pipe(
       tap((_) => console.debug('Cuecard added!')),
@@ -108,7 +110,7 @@ export class TipService {
   }
 
   updateCuecard(tip_uuid: String, cuecard_uuid: String, sort_order: number): Observable<any> {
-    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid, sort_order);
+    let formTipCuecard = new FormTipCuecard(tip_uuid, cuecard_uuid, sort_order, null);
 
     return this.http.post(urls['tip_cuecard'], formTipCuecard, httpOptions).pipe(
       tap((_) => console.debug('Cuecard updated!')),

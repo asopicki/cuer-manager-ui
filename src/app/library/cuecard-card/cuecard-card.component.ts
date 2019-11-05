@@ -17,6 +17,7 @@ export class CuecardCardComponent implements OnInit {
   @Input() showIssues: boolean
   @Input() canDelete: boolean = false;
   @Input() canEdit: boolean = false;
+  @Input() cuedAt: String;
   @Output() edit = new EventEmitter<Cuecard>();
   @Output() deleted= new EventEmitter<Cuecard>();
 
