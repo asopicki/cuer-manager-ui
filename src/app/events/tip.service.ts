@@ -12,6 +12,7 @@ import { Tip } from './tip';
 const urls = {
   "tips_program": "v2/tips/",
   "new_tip": "v2/tips",
+  "update_tip": "v2/tips",
   "tip_cuecard": "/v2/tip_cuecard",
 };
 
@@ -26,6 +27,22 @@ class FormTip {
   date_end: string
   
   constructor(name: string, program_id: number, date_start: string, date_end: string) {
+    this.name = name;
+    this.program_id = program_id;
+    this.date_start = date_start;
+    this.date_end = date_end;
+  }
+}
+
+class FormUpdateTip {
+  uuid: string
+  name: string
+	program_id: number
+	date_start: string
+  date_end: string
+  
+  constructor(uuid: string, name: string, program_id: number, date_start: string, date_end: string) {
+    this.uuid = uuid;
     this.name = name;
     this.program_id = program_id;
     this.date_start = date_start;
@@ -79,6 +96,20 @@ export class TipService {
     return this.http.put(urls['new_tip'], tip, httpOptions).pipe(
       tap((_) => console.debug('Tip created!')),
       catchError(this.handleError<void>('createTip'))
+    );
+  }
+
+  updateTip(uuid: string, name: string, program_id: number, startDate: DateTime, endDate: DateTime): Observable<any> {
+
+    console.debug('Start date:', startDate);
+
+    let tip = new FormUpdateTip(uuid, name, program_id, startDate.toUTC().toISO(), endDate.toUTC().toISO());
+
+    console.debug('Updating tip:', tip);
+
+    return this.http.post(urls['update_tip'], tip, httpOptions).pipe(
+      tap((_) => console.debug('Tip updated!')),
+      catchError(this.handleError<void>('updateTip'))
     );
   }
 

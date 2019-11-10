@@ -1,5 +1,5 @@
 <form [formGroup]="newTipForm" class="form-control" novalidate>
-<h1 mat-dialog-title>Add new tip</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <div>
     <label for="name">
@@ -41,6 +41,6 @@
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button [mat-dialog-close]="newTipForm" [disabled]="!newTipForm.valid">Add</button>
+  <button mat-button [mat-dialog-close]="newTipForm" [disabled]="!newTipForm.valid">{{buttonLabel}}</button>
 </div>
 </form>

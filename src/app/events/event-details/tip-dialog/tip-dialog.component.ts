@@ -4,9 +4,16 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { DateTime } from 'luxon';
 
+export enum TipDialogMode {
+  Add,
+  Update
+}
+
 export interface TipDialogData {
-  startTime: string;
-  endTime: string;
+  name: string | null
+  startTime: string
+  endTime: string
+  mode: TipDialogMode
 }
 
 @Component({
@@ -17,10 +24,12 @@ export interface TipDialogData {
 export class TipDialogComponent implements OnInit {
 
   newTipForm: FormGroup
+  mode: TipDialogMode
 
   constructor(public dialogRef: MatDialogRef<TipDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: TipDialogData) {
+    this.mode = data.mode;
     this.newTipForm = new FormGroup({
-      name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]),
+      name: new FormControl(data.name || '', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]),
       startTime: new FormControl(data.startTime, [Validators.required]),
       endTime: new FormControl(data.endTime, [Validators.required])
     }, {
@@ -33,6 +42,14 @@ export class TipDialogComponent implements OnInit {
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  get title() {
+    return this.mode == TipDialogMode.Add ? 'Add new tip' : 'Edit tip';
+  }
+
+  get buttonLabel() {
+    return this.mode == TipDialogMode.Add ? 'Add' : 'Update';
   }
 
   get name() {

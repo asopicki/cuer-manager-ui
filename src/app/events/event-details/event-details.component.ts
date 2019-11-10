@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of, EMPTY } from "rxjs";
@@ -15,7 +15,7 @@ import { EventService } from "../event.service";
 import { ProgramService } from "../program.service";
 import { TipService } from "../tip.service";
 import { Program } from '../program';
-import { TipDialogComponent } from './tip-dialog/tip-dialog.component';
+import { TipDialogComponent, TipDialogMode } from './tip-dialog/tip-dialog.component';
 import { NotesEditorComponent } from './notes-editor/notes-editor.component';
 import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.component';
 import { TipCuecard } from '../tip-cuecard';
@@ -28,12 +28,14 @@ const urls = {
 @Component({
   selector: 'app-event-details',
   templateUrl: './event-details.component.html',
-  styleUrls: ['./event-details.component.scss']
+  styleUrls: ['./event-details.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EventDetailsComponent implements OnInit {
   event: Event;
   tips: Tip[];
   loading: boolean;
+  tipIssues: String[][];
 
   constructor(
     private route: ActivatedRoute,
@@ -71,6 +73,7 @@ export class EventDetailsComponent implements OnInit {
                               if (tips) {
                                 result.setTips(tips);
                                 this.tips = tips;
+                                this.analyze(tips);
                               }
                             });
                         }
@@ -143,8 +146,10 @@ export class EventDetailsComponent implements OnInit {
 
     const dialogRef = this.dialog.open(TipDialogComponent, {
       data: {
+        name: null,
         startTime: startDate.toFormat('HH:mm'), 
-        endTime: endDate.toFormat('HH:mm')
+        endTime: endDate.toFormat('HH:mm'),
+        mode: TipDialogMode.Add
       }
     });
 
@@ -185,6 +190,56 @@ export class EventDetailsComponent implements OnInit {
     });
   }
 
+  editTip(tip: Tip) {
+    let startDate = DateTime.fromJSDate(tip.date_start);
+    let endDate = DateTime.fromJSDate(tip.date_end);
+    
+    const dialogRef = this.dialog.open(TipDialogComponent, {
+      data: {
+        name: tip.name,
+        startTime: startDate.toFormat('HH:mm'), 
+        endTime: endDate.toFormat('HH:mm'),
+        mode: TipDialogMode.Update
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+
+      let startDate = DateTime.fromJSDate(this.event.date_start);
+      let startTime = DateTime.fromISO(result.get('startTime').value);      
+      let endTime = DateTime.fromISO(result.get('endTime').value);
+
+      startDate = startDate.set({
+        hour: startTime.hour,
+        minute: startTime.minute,
+        second: startTime.second,
+        millisecond: startTime.millisecond
+      });
+      
+      let endDate = startDate.set({
+        hour: endTime.hour,
+        minute: endTime.minute,
+        second: endTime.second,
+        millisecond: endTime.millisecond
+      })
+
+      this.tipService.updateTip(
+        tip.uuid.toString(),
+        result.get('name').value, 
+        this.event.getProgram().id,
+        startDate, 
+        endDate).subscribe(_tip => {
+        this.tipService.getTips(this.event.getProgram()).subscribe(tips => {
+          this.event.setTips(tips);
+          this.tips = tips;
+        });
+      });
+    });
+  }
+
   removeTip(tip: Tip): void {
     //console.debug('Removing tip', tip);
 
@@ -219,8 +274,58 @@ export class EventDetailsComponent implements OnInit {
 
   updateTips(program: Program) {
     this.tipService.getTips(program).subscribe(tips => {
-      if (tips) this.tips = tips
+      if (tips) {
+        this.tips = tips
+        this.analyze(tips);
+        
+      }
     })
+  }
+
+  issueCount(tip: Tip): number {
+    return this.tipIssues[tip.uuid.toString()] ? this.tipIssues[tip.uuid.toString()].length : 0;
+  }
+
+  issues(tip): String {
+    return this.tipIssues[tip.uuid.toString()].join("  ---  ") || "";
+  }
+
+  analyze(tips: Tip[]) {
+    this.tipIssues = [];
+    let previousTip: Tip;
+
+    for(let tip of tips) {
+      let rhythms: String[] = [];
+      for(let cuecard of (<Cuecard[]>tip.cuecards)) {
+        if (rhythms.includes(cuecard.rhythm)) {
+          let message = "Same rhythm found more than once in this tip!";
+          if (this.tipIssues[tip.uuid.toString()]) {
+            this.tipIssues[tip.uuid.toString()].push(message)
+          } else {
+            this.tipIssues[tip.uuid.toString()] = [message];
+          }
+        } else {
+          rhythms.push(cuecard.rhythm);
+        } 
+      }
+
+      if (previousTip) {
+        let lastCuecard = <Cuecard>previousTip.cuecards[previousTip.cuecards.length-1];
+        let firstCuecard = <Cuecard>tip.cuecards[0];
+
+        if (lastCuecard && firstCuecard && lastCuecard.rhythm == firstCuecard.rhythm) {
+          let message = "Tip starts with the same rhythm as the previous one ends!"
+          if (this.tipIssues[tip.uuid.toString()]) {
+            this.tipIssues[tip.uuid.toString()].push(message)
+          } else {
+            this.tipIssues[tip.uuid.toString()] = [message];
+          }
+        }
+      }
+      previousTip = tip;
+    }
+
+    //this.changeDetection.detectChanges();
   }
 
   drop(event: CdkDragDrop<any>) {
@@ -254,6 +359,7 @@ export class EventDetailsComponent implements OnInit {
         previousTip.cuecards.splice(event.previousIndex,1);
       })
 
+      this.analyze(this.tips);
     } else if (event.currentIndex != event.previousIndex) {
       let tip = <Tip>event.container.data;
 
@@ -271,6 +377,8 @@ export class EventDetailsComponent implements OnInit {
           this.tipService.updateCuecard(tip.uuid, (<Cuecard>cuecard).uuid, newIndex+1).subscribe(_ => {});
         }
       });
+      
+      this.analyze(this.tips);      
     }
   }
 
