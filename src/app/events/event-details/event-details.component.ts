@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable, of, EMPTY } from "rxjs";
@@ -28,8 +28,7 @@ const urls = {
 @Component({
   selector: 'app-event-details',
   templateUrl: './event-details.component.html',
-  styleUrls: ['./event-details.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./event-details.component.scss']
 })
 export class EventDetailsComponent implements OnInit {
   event: Event;
@@ -280,14 +279,6 @@ export class EventDetailsComponent implements OnInit {
         
       }
     })
-  }
-
-  issueCount(tip: Tip): number {
-    return this.tipIssues[tip.uuid.toString()] ? this.tipIssues[tip.uuid.toString()].length : 0;
-  }
-
-  issues(tip): String {
-    return this.tipIssues[tip.uuid.toString()].join("  ---  ") || "";
   }
 
   analyze(tips: Tip[]) {

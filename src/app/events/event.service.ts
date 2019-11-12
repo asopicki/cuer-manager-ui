@@ -31,9 +31,9 @@ export class EventService {
     this.messageService.add(msg);
   }
 
-  getEvents(): Observable<Event[]> {
-    let start_date =  DateTime.local().minus({months: 1}).toUTC().toISO(); 
-    let end_date =  DateTime.local().plus({months: 3}).toUTC().toISO();
+  getEvents(date_start: String | null = null, date_end: String | null = null): Observable<Event[]> {
+    let start_date =  date_start || DateTime.local().minus({months: 1}).toUTC().toISO(); 
+    let end_date = date_end || DateTime.local().plus({months: 3}).toUTC().toISO();
 
     return this.http.get<Event[]>(urls['events']+'/'+ start_date + '/' + end_date)
       .pipe(map(events => {

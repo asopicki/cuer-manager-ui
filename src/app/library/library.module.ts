@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
+import {ScrollingModule} from '@angular/cdk/scrolling';
 import {MatListModule} from '@angular/material/list';
 import {MatCardModule} from '@angular/material/card';
 import {MatChipsModule} from '@angular/material/chips';
@@ -23,6 +24,7 @@ import { MetadataEditorComponent } from './metadata-editor/metadata-editor.compo
 const modules = [
   ReactiveFormsModule,
   FormsModule,
+  ScrollingModule,
   MatFormFieldModule,
   MatButtonModule,
   MatInputModule,

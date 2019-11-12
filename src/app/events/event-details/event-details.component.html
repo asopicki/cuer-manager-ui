@@ -25,9 +25,7 @@
           <span class="tip-name">{{tip.name}} ({{tip.date_start | date:'H:mm'}} - {{tip.date_end | date:'H:mm'}})</span> 
           <span class="far fa-minus-square" title="Remove tip" (click)="removeTip(tip)"></span>
           <span class="fa fa-edit fa-fw edit-tip" (click)="editTip(tip)" title="Edit tip"></span>
-          <span *ngIf="issueCount(tip) > 0" [matBadge]="issueCount(tip)" matBadgePosition="above after" matBadgeOverlap="false"
-                [matBadgeHidden]="!issueCount(tip)" [matBadgeDescription]="issues(tip)" matTooltipClass="issues" 
-                matBadgeColor="warn" [matTooltip]="issues(tip)" matTooltipPosition="right" ><i class="fas fa-exclamation-triangle"></i></span>
+          <app-issue-badge [issueMessages]="tipIssues" [key]="tip.uuid"></app-issue-badge>
           <div>
               <i class="far fa-plus-square add-new-cuecard" (click)="addCuecard(tip)" title="Add new cuecard"> Add new cuecard</i>
           </div>    

@@ -30,6 +30,7 @@ const routes: Routes = [
     component: EventDetailsComponent,
     canActivate: [MigrationsGuard]
   },
+  { path: 'events/:date_start/:date_end', component: EventsComponent, canActivate: [MigrationsGuard]},
 ];
 
 let modules =  [

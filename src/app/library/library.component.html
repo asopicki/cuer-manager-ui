@@ -36,9 +36,11 @@
     <button mat-raised-button (click)="selectFile()">Convert</button>
 </div>
 <mat-list class="list">
-    <mat-list-item *ngFor="let cuecard of cuecards" class="cuecard">
+    <cdk-virtual-scroll-viewport itemSize="30" class="list-viewport">
+        <mat-list-item *cdkVirtualFor="let cuecard of cuecards; templateCacheSize: 10" class="cuecard">
             <app-cuecard-card [cuecard]="cuecard" class="item" (dblclick)="open(cuecard)" [tagsedit]="true" [showIssues]="true"
                 [canEdit]="true" (edit)="onedit(cuecard)">
             </app-cuecard-card>
-    </mat-list-item>
+        </mat-list-item>
+    </cdk-virtual-scroll-viewport>
 </mat-list>

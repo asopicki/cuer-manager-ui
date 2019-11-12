@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import {MatListModule} from '@angular/material/list';
+import {MatCardModule} from '@angular/material/card';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatTooltipModule} from '@angular/material/tooltip';
 
@@ -14,15 +15,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TipDialogComponent } from './event-details/tip-dialog/tip-dialog.component';
 import { SearchModule } from '../search/search.module';
 import { NotesEditorComponent } from './event-details/notes-editor/notes-editor.component';
+import { IssueBadgeComponent } from './event-details/issue-badge/issue-badge.component';
 
 
 @NgModule({
-  declarations: [EventsComponent, EventDetailsComponent, NewEventComponent, EventFormComponent, TipDialogComponent, NotesEditorComponent],
+  declarations: [EventsComponent, EventDetailsComponent, NewEventComponent, EventFormComponent, TipDialogComponent, NotesEditorComponent, IssueBadgeComponent],
   entryComponents: [TipDialogComponent, NotesEditorComponent],
   imports: [
     CommonModule,
     EventRoutingModule,
     ReactiveFormsModule,
+    MatCardModule,
     MatListModule,
     MatBadgeModule,
     MatTooltipModule,
