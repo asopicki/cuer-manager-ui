@@ -17,15 +17,17 @@
         <span class="checkmark"></span>
     </label>
     <p class="playback_rate">
-       <input type="range" name="playbackRate" min="50" max="200" [(value)]="playbackRate" step="1" 
+       <input type="range" name="playbackRate" min="80" max="130" [(value)]="playbackRate" step="1" 
        (change)="playRateChange($event)" (dblclick)="resetRate()" list="tickmarks"/>
        Speed: {{playbackRate}}%
 
        <datalist id="tickmarks">
-           <option value="50" ></option>
+           <option value="80" ></option>
+           <option value="90" ></option>
            <option value="100" ></option>
-           <option value="150" ></option>
-           <option value="200" ></option>
+           <option value="110" ></option>
+           <option value="120" ></option>
+           <option value="130" ></option>
        </datalist>
     </p>
     <p>
