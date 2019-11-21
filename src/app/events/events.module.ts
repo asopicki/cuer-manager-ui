@@ -6,6 +6,8 @@ import {MatCardModule} from '@angular/material/card';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatTooltipModule} from '@angular/material/tooltip';
 
+import { ChartsModule } from 'ng2-charts';
+
 import { EventsComponent } from './events.component';
 import { EventDetailsComponent } from './event-details/event-details.component';
 import { NewEventComponent } from './new-event/new-event.component';
@@ -29,6 +31,7 @@ import { IssueBadgeComponent } from './event-details/issue-badge/issue-badge.com
     MatListModule,
     MatBadgeModule,
     MatTooltipModule,
+    ChartsModule,
     SearchModule,
     DragDropModule
   ],

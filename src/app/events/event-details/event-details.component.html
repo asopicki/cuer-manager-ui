@@ -39,7 +39,15 @@
       </mat-list>
     </div>
   </div>
-
+  <div class="chart-wrapper">
+    <canvas baseChart 
+    [datasets]="rhythmChartData"
+    [labels]="rhythmChartLabels"
+    [options]="rhythmChartOptions"
+    [legend]="rhythmChartLegend"
+    [chartType]="rhythmChartType" width="500" height="250">
+  </canvas>
+</div>
 </div>
 <div *ngIf="!loading && !event">
   Event not found

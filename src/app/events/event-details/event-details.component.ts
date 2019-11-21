@@ -6,6 +6,9 @@ import { map, mergeMap, catchError } from 'rxjs/operators';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
+import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { Label } from 'ng2-charts';
+
 import { DateTime } from 'luxon';
 
 import { Event } from '../event';
@@ -36,6 +39,15 @@ export class EventDetailsComponent implements OnInit {
   loading: boolean;
   tipIssues: String[][];
 
+  rhythmChartOptions: ChartOptions = {
+    responsive: false,
+  };
+  rhythmChartLabels: Label[]
+  rhythmChartType: ChartType = 'bar'
+  rhythmChartLegend = false
+  rhythmChartData: ChartDataSets[]
+
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
@@ -46,6 +58,12 @@ export class EventDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.rhythmChartData = [
+      {
+        data: [],
+        label: 'Occurence in program'
+      }
+    ]
     this.loading = true
     this.route.paramMap.subscribe(params => this.getEvent(params.get('uuid') || '').subscribe(event => {
       this.event = event;
@@ -316,7 +334,11 @@ export class EventDetailsComponent implements OnInit {
       previousTip = tip;
     }
 
-    //this.changeDetection.detectChanges();
+    this._statistics();
+  }
+
+  _statistics() {
+    
   }
 
   drop(event: CdkDragDrop<any>) {
