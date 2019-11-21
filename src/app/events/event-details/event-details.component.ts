@@ -334,11 +334,34 @@ export class EventDetailsComponent implements OnInit {
       previousTip = tip;
     }
 
-    this._statistics();
+    this._statistics(tips);
   }
 
-  _statistics() {
-    
+  _statistics(tips: Tip[]) {
+    let labels: Label[] = [];
+    let dataset =  [
+      {
+        data: [],
+        label: 'Occurence in program'
+      }
+    ]
+
+
+    for(let tip of tips) {
+      for(let cuecard of (<Cuecard[]>tip.cuecards)) {
+        let index =labels.indexOf(<Label>cuecard.rhythm);
+
+        if (index >= 0) {
+          dataset[0].data[index] += 1;
+        } else {
+          labels.push(<Label>cuecard.rhythm);
+          dataset[0].data.push(1);
+        }
+      }
+    }
+
+    this.rhythmChartData = dataset;
+    this.rhythmChartLabels = labels;
   }
 
   drop(event: CdkDragDrop<any>) {
