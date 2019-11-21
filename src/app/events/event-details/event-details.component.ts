@@ -41,6 +41,15 @@ export class EventDetailsComponent implements OnInit {
 
   rhythmChartOptions: ChartOptions = {
     responsive: false,
+    scales: {
+      yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            precision: 0
+          },
+          type: 'linear'
+      }]
+    }
   };
   rhythmChartLabels: Label[]
   rhythmChartType: ChartType = 'bar'
