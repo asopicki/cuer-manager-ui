@@ -6,8 +6,8 @@ import { map, mergeMap, catchError } from 'rxjs/operators';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label, Color } from 'ng2-charts';
+import { ChartDataSets } from 'chart.js';
+import { Label } from 'ng2-charts';
 
 import { DateTime } from 'luxon';
 
@@ -24,41 +24,7 @@ import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.
 import { TipCuecard } from '../tip-cuecard';
 
 //TODO: Move to chart component
-const backgroundColors = [
-  '#b71c1c',
-  '#880e4f',
-  '#4a148c',
-  '#311b92',
-  '#1a237e',
-  '#0d47a1',
-  '#01579b',
-  '#006064',
-  '#004d40',
-  '#1b5e20',
-  '#33691e',
-  '#827717',
-  '#f57f17',
-  '#ff6f00',
-  '#e65100'
-];
 
-const borderColors = [
-  '#b71c1c',
-  '#880e4f',
-  '#4a148c',
-  '#311b92',
-  '#1a237e',
-  '#0d47a1',
-  '#01579b',
-  '#006064',
-  '#004d40',
-  '#1b5e20',
-  '#33691e',
-  '#827717',
-  '#f57f17',
-  '#ff6f00',
-  '#e65100'
-];
 
 const urls = {
   'cuecard_data': '/cuecard/'
@@ -75,24 +41,9 @@ export class EventDetailsComponent implements OnInit {
   loading: boolean;
   tipIssues: String[][];
 
-  rhythmChartOptions: ChartOptions = {
-    responsive: false,
-    scales: {
-      yAxes: [{
-          ticks: {
-            beginAtZero: true,
-            precision: 0
-          },
-          type: 'linear'
-      }]
-    }
-  };
   rhythmChartLabels: Label[]
-  rhythmChartType: ChartType = 'bar'
   rhythmChartLegend = false
   rhythmChartData: ChartDataSets[]
-  rhythmChartColors: Color[]
-
 
   constructor(
     private route: ActivatedRoute,
@@ -110,9 +61,7 @@ export class EventDetailsComponent implements OnInit {
         label: 'Occurence in program'
       }
     ]
-    this.rhythmChartColors = [{
-      backgroundColor: backgroundColors
-    }]
+    
     this.loading = true
     this.route.paramMap.subscribe(params => this.getEvent(params.get('uuid') || '').subscribe(event => {
       this.event = event;

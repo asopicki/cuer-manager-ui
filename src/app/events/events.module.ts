@@ -6,8 +6,6 @@ import {MatCardModule} from '@angular/material/card';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatTooltipModule} from '@angular/material/tooltip';
 
-import { ChartsModule } from 'ng2-charts';
-
 import { EventsComponent } from './events.component';
 import { EventDetailsComponent } from './event-details/event-details.component';
 import { NewEventComponent } from './new-event/new-event.component';
@@ -18,10 +16,20 @@ import { TipDialogComponent } from './event-details/tip-dialog/tip-dialog.compon
 import { SearchModule } from '../search/search.module';
 import { NotesEditorComponent } from './event-details/notes-editor/notes-editor.component';
 import { IssueBadgeComponent } from './event-details/issue-badge/issue-badge.component';
-
+import { BarChartComponent } from './event-details/bar-chart/bar-chart.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
-  declarations: [EventsComponent, EventDetailsComponent, NewEventComponent, EventFormComponent, TipDialogComponent, NotesEditorComponent, IssueBadgeComponent],
+  declarations: [
+    EventsComponent, 
+    EventDetailsComponent, 
+    NewEventComponent, 
+    EventFormComponent, 
+    TipDialogComponent, 
+    NotesEditorComponent, 
+    IssueBadgeComponent,
+    BarChartComponent
+  ],
   entryComponents: [TipDialogComponent, NotesEditorComponent],
   imports: [
     CommonModule,
