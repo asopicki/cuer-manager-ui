@@ -15,6 +15,7 @@ import {MatBadgeModule} from '@angular/material/badge';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatTreeModule} from '@angular/material/tree';
+import {CdkTreeModule} from '@angular/cdk/tree';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatIconModule} from '@angular/material/icon';
 
@@ -40,6 +41,7 @@ const modules = [
   MatBadgeModule,
   MatTooltipModule,
   MatDialogModule,
+  CdkTreeModule,
   MatTreeModule,
   MatProgressBarModule,
   MatIconModule
