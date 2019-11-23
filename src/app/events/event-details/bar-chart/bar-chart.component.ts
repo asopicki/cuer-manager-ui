@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { ChartOptions, ChartType, ChartDataSets, LinearTickOptions } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
 
 const backgroundColors = [
@@ -56,8 +56,7 @@ export class BarChartComponent implements OnInit {
     scales: {
       yAxes: [{
           ticks: {
-            beginAtZero: true,
-            precision: 0
+            beginAtZero: true
           },
           type: 'linear'
       }]
@@ -68,6 +67,7 @@ export class BarChartComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    (<LinearTickOptions>this.chartOptions.scales.yAxes[0].ticks).precision = 0;
     this.chartColors = [{
       backgroundColor: backgroundColors
     }]

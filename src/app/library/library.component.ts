@@ -108,11 +108,15 @@ export class LibraryComponent implements OnInit {
 
     const dialogRef = this.dialog.open(MetadataEditorComponent, {
       data: data,
-      height: '720px',
-      width: '800px'
+      height: '70%',
+      width: '60%'
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+
       console.log("dialog closed", "Result: ", result);
       let data = new MetaData();
 
