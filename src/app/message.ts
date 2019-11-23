@@ -1,4 +1,3 @@
-import { Injectable } from "@angular/core";
 
 export enum MessageType {
     InfoMessage,
@@ -6,9 +5,6 @@ export enum MessageType {
     ErrorMessage
 };
 
-@Injectable({
-    providedIn: 'root'
-})
 export class Message {
     type: MessageType
     title: String

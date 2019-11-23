@@ -1,5 +1,6 @@
-import {CollectionViewer, SelectionChange} from '@angular/cdk/collections';
+import {CollectionViewer, SelectionChange, DataSource} from '@angular/cdk/collections';
 import {FlatTreeControl} from '@angular/cdk/tree';
+import {TreeControl} from '@angular/cdk/tree';
 import { Component, OnInit, Injectable } from '@angular/core';
 import {BehaviorSubject, merge, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -74,6 +75,7 @@ export class FileDataSource {
 
   /** Handle expand/collapse behaviors */
   handleTreeControl(change: SelectionChange<FileNode>) {
+    console.debug('test');
     if (change.added) {
       change.added.forEach(node => this.toggleNode(node, true));
     }
@@ -86,6 +88,7 @@ export class FileDataSource {
    * Toggle the node, remove from display list
    */
   toggleNode(node: FileNode, expand: boolean) {
+    console.debug('trace');
     const children = this.database.getChildren(node.item, this.fileService);
     const index = this.data.indexOf(node);
     if (!children || index < 0) { // If no children, or cannot find the node, no op
