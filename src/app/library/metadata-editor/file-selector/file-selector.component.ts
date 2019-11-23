@@ -94,29 +94,27 @@ export class FileDataSource {
 
     node.isLoading = true;
 
-    setTimeout(() => {
-      if (expand) {
-        children.subscribe(music_files => {
-          if (music_files) {
-            const nodes = music_files.map(music_file => {
-              return new FileNode(music_file, node.level + 1, this.database.isExpandable(music_file))});
+    if (expand) {
+      children.subscribe(music_files => {
+        if (music_files) {
+          const nodes = music_files.map(music_file => {
+            return new FileNode(music_file, node.level + 1, this.database.isExpandable(music_file))});
 
-            this.data.splice(index + 1, 0, ...nodes);
-            // notify the change
-            this.dataChange.next(this.data);
-            node.isLoading = false;
-          }
-        });
-      } else {
-        let count = 0;
-        for (let i = index + 1; i < this.data.length
-          && this.data[i].level > node.level; i++, count++) {}
-        this.data.splice(index + 1, count);
-        // notify the change
-        this.dataChange.next(this.data);
-        node.isLoading = false;
-      }
-    }, 1000);
+          this.data.splice(index + 1, 0, ...nodes);
+          // notify the change
+          this.dataChange.next(this.data);
+          node.isLoading = false;
+        }
+      });
+    } else {
+      let count = 0;
+      for (let i = index + 1; i < this.data.length
+        && this.data[i].level > node.level; i++, count++) {}
+      this.data.splice(index + 1, count);
+      // notify the change
+      this.dataChange.next(this.data);
+      node.isLoading = false;
+    }
   }
 }
 
@@ -145,7 +143,6 @@ export class FileSelectorComponent implements OnInit {
   }
 
   ngOnInit() {
-    
   }
 
   getLevel = (node: FileNode) => node.level;
