@@ -11,6 +11,7 @@ export class MusicFileEntry {
   file_name: String
   file_type: FileType
   parent_path: String
+  separator: String
 }
 
 @Injectable({

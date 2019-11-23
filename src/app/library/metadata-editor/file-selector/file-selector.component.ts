@@ -37,7 +37,7 @@ export class FileDatabase {
       return fileService.getRoot()
     } else {
       if (node.parent_path) {
-        return fileService.getSub(node.parent_path + "/" + node.file_name);
+        return fileService.getSub(node.parent_path + node.separator.toString() + node.file_name);
       }
       return fileService.getSub(node.file_name);
     }
