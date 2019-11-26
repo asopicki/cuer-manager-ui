@@ -14,6 +14,7 @@ import { EventDetailsComponent } from './event-details/event-details.component';
 import { NewEventComponent } from './new-event/new-event.component';
 import { EventsComponent } from './events.component';
 import { MigrationsGuard } from '../migrations.guard';
+import { EventReportComponent } from './event-report/event-report.component';
 
 @Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
@@ -28,6 +29,11 @@ const routes: Routes = [
   { 
     path: 'events/details/:uuid', 
     component: EventDetailsComponent,
+    canActivate: [MigrationsGuard]
+  },
+  {
+    path: 'events/report/:uuid',
+    component: EventReportComponent,
     canActivate: [MigrationsGuard]
   },
   { path: 'events/:date_start/:date_end', component: EventsComponent, canActivate: [MigrationsGuard]},

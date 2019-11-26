@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
 import { Observable, of, EMPTY } from "rxjs";
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -23,9 +22,6 @@ import { NotesEditorComponent } from './notes-editor/notes-editor.component';
 import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.component';
 import { TipCuecard } from '../tip-cuecard';
 
-//TODO: Move to chart component
-
-
 const urls = {
   'cuecard_data': '/cuecard/'
 };
@@ -47,7 +43,6 @@ export class EventDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
     private eventService: EventService, 
     private programService: ProgramService, 
     private tipService: TipService,
@@ -100,7 +95,7 @@ export class EventDetailsComponent implements OnInit {
                return of(null);
             }
     }));
-}  
+  }  
 
   plusFigures(cuecard: Cuecard): String {
     return cuecard.meta['plusfigures'];
@@ -418,5 +413,9 @@ export class EventDetailsComponent implements OnInit {
 
   open(cuecard: Cuecard) {
     window.open(cuecard.getLink().toString(), "_blank");
+  }
+
+  createReport(): void {
+    
   }
 }

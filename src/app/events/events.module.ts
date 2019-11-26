@@ -18,6 +18,7 @@ import { NotesEditorComponent } from './event-details/notes-editor/notes-editor.
 import { IssueBadgeComponent } from './event-details/issue-badge/issue-badge.component';
 import { BarChartComponent } from './event-details/bar-chart/bar-chart.component';
 import { ChartsModule } from 'ng2-charts';
+import { EventReportComponent } from './event-report/event-report.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ChartsModule } from 'ng2-charts';
     TipDialogComponent, 
     NotesEditorComponent, 
     IssueBadgeComponent,
-    BarChartComponent
+    BarChartComponent,
+    EventReportComponent
   ],
   entryComponents: [TipDialogComponent, NotesEditorComponent],
   imports: [
