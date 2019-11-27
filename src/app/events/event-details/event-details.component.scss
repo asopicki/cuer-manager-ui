@@ -1,5 +1,25 @@
+@import 'abstracts/variables';
+
 .panel {
   width: 100%;
+}
+
+.event-name {
+  font-size: 1.3em;
+  color: $primary-dark;
+}
+
+.event-date {
+  color: $primary-light;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.report-link {
+  color: $primary-light;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.9em;
 }
 
 .event.panel {
@@ -42,20 +62,6 @@
   color: black;
   margin-bottom: 0.9em;
 }
-
-.panel.tip ul {
-  font-weight: bold;
-  text-align: left;
-}
-
-.panel.tip ul li a {
-  color: #615550;
-}
-
-.panel.tip ul li a:hover {
-  color: #006E6D;
-}
-
 .tip-header { 
   text-align: center;
 }

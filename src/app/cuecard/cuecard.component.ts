@@ -239,7 +239,7 @@ export class CuecardComponent implements OnInit, AfterViewInit {
   }
 
   highlight() {
-    const style = "background-color: #70625d; color: white; font-weight: bold; font-size: 1.2em; padding: 0.2em 0.3em;"
+    const style = "background-color: #232F34; color: white; font-weight: bold; font-size: 1.2em; padding: 0.2em 0.3em;"
     if (this.currentP) {
       let text = this.currentP.innerText;
       let parts = text.split(';');
@@ -264,7 +264,8 @@ export class CuecardComponent implements OnInit, AfterViewInit {
 
         let cueterm = parts[this.currentIndex];
 
-        cueterm = '<span style="' + style + '">' + cueterm + '</span> ';
+        //cueterm = '<span style="' + style + '">' + cueterm + '</span> ';
+        cueterm = '<span class="highlight">' + cueterm + '</span> ';
 
         parts[this.currentIndex++] = cueterm;
 
@@ -294,7 +295,7 @@ export class CuecardComponent implements OnInit, AfterViewInit {
 
       let cueterm = parts[this.currentIndex++];
 
-      cueterm = '<span style="' + style + '">' + cueterm + '</span>;';
+      cueterm = '<span class="highlight">' + cueterm + '</span>;';
 
       parts.shift();
 

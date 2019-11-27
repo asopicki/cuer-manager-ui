@@ -5,9 +5,9 @@
   <div class="panel event">
     <span class="far fa-calendar-check fa-fw"></span>
     <span class="event-name">{{event?.name}}</span>
-    <div class="textbold">Start: <span>{{event?.date_start | date:'EEE, MMM d' }}</span></div>
-    <div class="textbold">End: <span>{{event?.date_end  | date:'EEE, MMM d' }}</span></div>
-    <div><a routerLink="/events/report/{{event.uuid}}" target="_blank">Report of cued choreos</a></div>
+    <div class="event-date">Start: <span>{{event?.date_start | date:'EEE, MMM d' }}</span></div>
+    <div class="event-date">End: <span>{{event?.date_end  | date:'EEE, MMM d' }}</span></div>
+    <div><a routerLink="/events/report/{{event.uuid}}" target="_blank" class="report-link">Report of cued choreos</a></div>
   </div>
   <div class="panel program" *ngIf="program">
     <span class="fa fa-tasks fa-fw"></span>

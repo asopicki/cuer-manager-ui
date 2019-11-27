@@ -26,6 +26,11 @@
               "src/favicon.ico",
               "src/assets"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/sass"
+              ]
+            },
             "styles": [
               "node_modules/tui-editor/dist/tui-editor.min.css",
               "src/styles.scss"

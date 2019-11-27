@@ -1,3 +1,5 @@
+@import 'abstracts/variables';
+
 #player {
     position: fixed;
     z-index: 100;
@@ -5,8 +7,9 @@
     margin-top: 2em;
 }
 
-.highlight {
-    background-color: #70625d; 
+
+:host ::ng-deep span.highlight {
+    background-color: $primary-dark; 
     color: white;
     font-weight: bold;
     font-size: 1.2em;

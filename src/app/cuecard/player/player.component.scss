@@ -1,6 +1,7 @@
+@import 'abstracts/variables';
 
 button {
-    background-color: #615550;
+    background-color: $primary;
     border: none;
     color: white;
     cursor: pointer;
@@ -10,7 +11,7 @@ button {
 }
 
 button:disabled {
-    background-color: #ccc;
+    background-color: $primary-light;
 }
 
 label input[type='file'] {
@@ -18,7 +19,7 @@ label input[type='file'] {
 }
 
 label[for='external_file'] {
-    background-color: #615550;
+    background-color: $primary;
     border: none;
     color: white;
     cursor: pointer;
@@ -54,15 +55,15 @@ label[for='external_file'] {
     left: 0;
     height: 25px;
     width: 25px;
-    background-color: #eee;
+    background-color: $primary-light;
 }
 
 .label:hover input ~ .checkmark {
-    background-color: #ccc;
+    background-color: $primary-light;
 }
 
 .label input:checked ~ .checkmark {
-    background-color: #615550;
+    background-color: $primary;
 }
 
 .checkmark:after {
@@ -88,7 +89,7 @@ label[for='external_file'] {
 }
 
 .playback_rate {
-    color: #615550;
+    color: $primary-light;
 }
 
 details {
@@ -100,10 +101,24 @@ details summary {
 }
 
 details .letter {
-    background-color: #615550;
+    background-color: $primary;
     color: white;
     border-radius: 0.2em;
     padding: 0.2em 0.4em;
     font-size: 1.1em;
     font-weight: bold;
+}
+
+progress::-moz-progress-bar {
+    background-color: $primary;
+}
+
+progress::-webkit-progress-value {
+    background-color: $primary;
+}
+
+progress {
+    /* -webkit-appearance: none; */
+    background-color: white;
+    color: white;
 }

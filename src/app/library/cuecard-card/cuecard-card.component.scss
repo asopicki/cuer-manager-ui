@@ -1,10 +1,12 @@
+@import 'abstracts/variables';
+
 .cuecard:hover {
-   background-color: #eee;
+   background-color: $primary-dark;
    cursor: pointer;
-   color: #607d8b;
+   color: white;
 }
 
 .note {
    font-style: italic;
-   color: #7c7e87;
+   color: $primary-light;
 }
