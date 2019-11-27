@@ -16,6 +16,10 @@ const urls = {
   'cuecard_data': '/cuecard/'
 };
 
+class CuedChoreo {
+  constructor(public cuecard: Cuecard, public tip: Tip) {}
+}
+
 @Component({
   selector: 'app-event-report',
   templateUrl: './event-report.component.html',
@@ -35,6 +39,7 @@ export class EventReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.tips = [];
     this.loading = true
     this.route.paramMap.subscribe(params => this._getEvent(params.get('uuid') || '').subscribe(event => {
       this.event = event;
@@ -86,8 +91,19 @@ export class EventReportComponent implements OnInit {
     return null;
   }
 
-  cuedChoreos(tip: Tip): Cuecard[] {
-    return <Cuecard[]>tip.cuecards.filter(cuecard => this.cuedAt(tip, <Cuecard>cuecard))
+  cuedChoreos(): CuedChoreo[] {
+    let result: CuedChoreo[] = [];
+    let previousTip: Tip;
+    this.tips.forEach(tip => {
+      tip.cuecards.forEach(cuecard => {
+        if (this.cuedAt(tip, <Cuecard>cuecard)) {
+          result.push(new CuedChoreo(<Cuecard>cuecard, tip))
+        }       
+      });
+      previousTip = tip;
+    })
+  
+    return result;
   }
 
   cuedAt(tip: Tip, cuecard: Cuecard): boolean {
