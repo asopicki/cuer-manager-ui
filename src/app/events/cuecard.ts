@@ -20,4 +20,29 @@ export class Cuecard {
 	getLink(): String{
 		return '/cuecard/' + this.uuid;
 	}
+
+	asTarget(): String {
+		let result = this.title;
+
+		if (result) {
+			let trans = {
+				'&.+?;': '',
+				'[^\\w\\d _-]': '',
+				'\\s+': '-',
+				'(-)+': '-'
+			};
+	
+			for (let [key, value] of Object.entries(trans)) {
+				let r = new RegExp(key, 'ig');
+	
+				result = result.replace(r,value);
+			}
+
+			
+			return result.toLowerCase();
+		}
+		
+
+		return this.uuid;
+	}
 }

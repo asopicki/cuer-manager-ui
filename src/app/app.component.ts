@@ -17,7 +17,10 @@ export class AppComponent {
 
   refresh() {
     this.service.refresh().subscribe(
-      () => this.messageService.info("Library refresh done."),
+      () => { 
+        this.service.announceLibraryRefreshed();
+        this.messageService.info("Library refresh done.") 
+      },
       (_) => this.messageService.error("Library update failed.")
     );
   }

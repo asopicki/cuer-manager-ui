@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup} from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { rhythms, phases } from '../shared/rhythms';
 import { MetaData, CuecardService } from '../cuecard/cuecard.service';
 import { MessageService } from '../message.service';
 import { FileConversionService } from './file-conversion.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-library',
@@ -17,12 +18,14 @@ import { FileConversionService } from './file-conversion.service';
   styleUrls: ['./library.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class LibraryComponent implements OnInit {
+export class LibraryComponent implements OnInit, OnDestroy {
 
   cuecards: Cuecard[]
   phases: string[]
   rhythms: string[]
   searchForm: FormGroup
+
+  refreshSubscription: Subscription;
 
   constructor(
     private searchService: SearchService, 
@@ -52,10 +55,22 @@ export class LibraryComponent implements OnInit {
     });
 
     this.getCuecards();
+
+    fileService.$libraryUpdated.subscribe(update => {
+      this.resetFilter();
+    })
+
+    this.refreshSubscription = this.cuecardService.$libraryRefreshed.subscribe(updated => {
+      this.resetFilter();
+    });
   }
 
   ngOnInit() {
 
+  }
+
+  ngOnDestroy() {
+    this.refreshSubscription.unsubscribe();
   }
 
   searchTitle(title: string) {
@@ -100,7 +115,7 @@ export class LibraryComponent implements OnInit {
   }
 
   open(cuecard: Cuecard) {
-    window.open(cuecard.getLink().toString(), "_blank");
+    window.open(cuecard.getLink().toString(), cuecard.asTarget().toString());
   }
 
   onedit(cuecard: Cuecard) {
@@ -145,6 +160,8 @@ export class LibraryComponent implements OnInit {
       }, () => {
         this.messageService.error("Error saving meta data!");
       });
+
+      
     })
   }
 

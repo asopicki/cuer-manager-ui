@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { CuecardService } from './cuecard.service';
@@ -7,6 +7,7 @@ import { PlayerEvent, EventType, PlayerComponent } from './player/player.compone
 import { Cuecard } from '../events/cuecard';
 import { MarkData } from './markdata';
 import { MessageService } from '../message.service';
+import { Subscription } from 'rxjs';
 
 const CUE_CHAR = "c";
 
@@ -15,10 +16,11 @@ const CUE_CHAR = "c";
   templateUrl: './cuecard.component.html',
   styleUrls: ['./cuecard.component.scss']
 })
-export class CuecardComponent implements OnInit, AfterViewInit {
+export class CuecardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild(PlayerComponent, {static: true})
   private playerComponent: PlayerComponent;
+  private refreshSubject: Subscription;
   cuecard: Cuecard;
   uuid: String;
   playing = false;
@@ -48,40 +50,58 @@ export class CuecardComponent implements OnInit, AfterViewInit {
       this.uuid = params.get('uuid');
 
       if (this.uuid) {
-        this.service.getCuecard(this.uuid).subscribe(cuecard => {
-          this.cuecard = cuecard
-          if (this.cuecard.karaoke_marks) {
-            let marks = JSON.parse(this.cuecard.karaoke_marks.toString());
+        this.loadCuecard();
 
-            if (Array.isArray(marks)) {
-              this.marks = marks;
-            } else if (typeof(marks) === 'object') {
-              marks = new MarkData(marks);
-              this.marks = marks.marks;
-              this.headlines = marks.headlines;
-            }
-          }
-        }, (_) => {
-          this._logError("Unable to load cuecard!");
-        });
-
-        this.service.getCuecardContent(this.uuid).subscribe(content => {
-          document.getElementById('cuecard').innerHTML = content.toString();
-
-          let headlines = document.querySelectorAll('#cuecard > h1');
-
-          headlines.forEach(headline => headline.addEventListener('dblclick', this.startAtHeadline.bind(this)));
-        }, (_) => {
-          this._logError("Unable to load cuecard content.");
-        });
+        this.loadCuecardContent();
       }
     });
   
     document.addEventListener('keyup', this.keyup.bind(this));
+    this.refreshSubject = this.service.$libraryRefreshed.subscribe( update => {
+      this.loadCuecard();
+      this.loadCuecardContent();
+    });
   }
 
   ngAfterViewInit() {
 
+  }
+
+  ngOnDestroy() {
+    this.refreshSubject.unsubscribe();
+  }
+
+  private loadCuecard() {
+    this.service.getCuecard(this.uuid).subscribe(cuecard => {
+      this.cuecard = cuecard
+      document.title = this.cuecard.title.toString() + ' - Cuer Event Manager';
+      if (this.cuecard.karaoke_marks) {
+        let marks = JSON.parse(this.cuecard.karaoke_marks.toString());
+
+        if (Array.isArray(marks)) {
+          this.marks = marks;
+        } else if (typeof(marks) === 'object') {
+          marks = new MarkData(marks);
+          this.marks = marks.marks;
+          this.headlines = marks.headlines;
+        }
+      }
+    }, (_) => {
+      this._logError("Unable to load cuecard!");
+    });
+  }
+
+  private loadCuecardContent() {
+    this.service.getCuecardContent(this.uuid).subscribe(content => {
+      document.getElementById('cuecard').innerHTML = content.toString();
+
+      let headlines = document.querySelectorAll('#cuecard > h1');
+
+      headlines.forEach(headline => headline.addEventListener('dblclick', this.startAtHeadline.bind(this)));
+      
+    }, (_) => {
+      this._logError("Unable to load cuecard content.");
+    });
   }
 
   onPlayerStateChanged(event: PlayerEvent) {

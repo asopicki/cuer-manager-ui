@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Cuecard } from '../events/cuecard';
@@ -22,6 +22,10 @@ export class MetaData {
   providedIn: 'root'
 })
 export class CuecardService {
+
+  private libraryRefreshed = new Subject<boolean>();
+
+  $libraryRefreshed = this.libraryRefreshed.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -65,6 +69,10 @@ export class CuecardService {
     let data = "";
 
     return this.http.post<void>('/v2/cuecards/refresh', data);
+  }
+
+  announceLibraryRefreshed() {
+    this.libraryRefreshed.next(true);
   }
 
   getTags(uuid: String): Observable<Tag[]> {
