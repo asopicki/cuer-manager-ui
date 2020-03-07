@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 
 import {PitchShifter} from 'soundtouchjs';
 import { Cuecard } from 'src/app/events/cuecard';
@@ -36,7 +36,7 @@ const LOAD_CHAR = "l";
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss']
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent implements OnInit, OnDestroy {
 
   @Input() cuecard: Cuecard;
   @Input() percentage: number;
@@ -48,6 +48,8 @@ export class PlayerComponent implements OnInit {
   playDisabled = true;
   stopDisabled = true;
   loadDisabled = false;
+  keyEvents = true;
+  eventListener;
   shifter: PitchShifter;
 
   startTime = 0;
@@ -62,7 +64,13 @@ export class PlayerComponent implements OnInit {
   }
 
   ngOnInit() {
-    document.addEventListener('keyup', this.keyup.bind(this));
+    this.eventListener = document.addEventListener('keyup', this.keyup.bind(this));
+  }
+
+  ngOnDestroy() {
+    if (this.eventListener) {
+      document.removeEventListener('keyup', this.eventListener);
+    }
   }
 
   setPercentage(percentage: number) {
@@ -179,11 +187,20 @@ export class PlayerComponent implements OnInit {
       this.stateChanged.emit(new PlayerEvent(EventType.StopEvent));
     }
   }
+
   save() {
     this.stateChanged.emit(new PlayerEvent(EventType.SaveEvent));
   }
 
-  keyup(event) {
+  toggleKeyEvents() {
+    this.keyEvents = !this.keyEvents;
+  }
+
+  keyup(event: KeyboardEvent) {
+    if (!this.keyEvents) {
+      return;
+    }
+
     if (!this.playDisabled && event.key === PLAY_CHAR) {
       this.play();
       event.preventDefault();

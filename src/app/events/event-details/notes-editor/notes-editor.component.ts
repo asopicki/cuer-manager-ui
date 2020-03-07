@@ -45,7 +45,7 @@ export class NotesEditorComponent implements OnInit, AfterContentInit {
 
   onSave(data): NotesDialogData {
     if (this.editor) {
-      data.notes = this.editor.getMarkdown().replace("\n<br>", "\n");
+      data.notes = this.editor.getMarkdown().replace("\n<br>", "\r\n");
     }
     return data;
   }

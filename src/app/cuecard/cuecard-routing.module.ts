@@ -1,6 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
+import { MatDialogModule } from '@angular/material/dialog';
+
 import { CuecardComponent } from './cuecard.component';
 import { MigrationsGuard } from '../migrations.guard';
 
@@ -13,6 +15,7 @@ const routes: Routes = [
       RouterModule.forRoot(routes)
     ],
     exports: [
+      MatDialogModule,
       RouterModule
     ],
     schemas: [ CUSTOM_ELEMENTS_SCHEMA ]

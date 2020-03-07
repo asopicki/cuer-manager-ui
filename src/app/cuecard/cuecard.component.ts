@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { MatDialog } from '@angular/material/dialog';
+
 import { CuecardService } from './cuecard.service';
 import { PlayerEvent, EventType, PlayerComponent } from './player/player.component';
 
@@ -8,6 +10,8 @@ import { Cuecard } from '../events/cuecard';
 import { MarkData } from './markdata';
 import { MessageService } from '../message.service';
 import { Subscription } from 'rxjs';
+
+import * as marked from 'marked';
 
 const CUE_CHAR = "c";
 
@@ -27,21 +31,35 @@ export class CuecardComponent implements OnInit, OnDestroy, AfterViewInit {
   recording = false;
   perc = 0;
   length: number;
+  eventListener;
   
   marks: String[] = [];
   headlines: String[] = [];
   karaokeMarks = [];
 
+  //editing
+  saveButtonClasses = ['hidden'];
+  editButtonClasses = [];
+  playerClasses = [];
+  markdownClasses = ['hidden'];
+  cuecardClasses = [];
+  editable = 'false';
+  debounceTime: number;
+  lastUpdate: number;
+  timer;
+
   currentH: HTMLElement;
   currentP: HTMLElement;
   currentElement = 0;
   currentIndex = 0;
+  marked;
   
   constructor(
     private route: ActivatedRoute, 
     private service: CuecardService, 
     private changeDetection: ChangeDetectorRef,
-    private messageService: MessageService)  { 
+    private messageService: MessageService,
+    private dialog: MatDialog )  { 
     
   }
 
@@ -56,7 +74,7 @@ export class CuecardComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   
-    document.addEventListener('keyup', this.keyup.bind(this));
+    this.eventListener = document.addEventListener('keyup', this.keyup.bind(this));
     this.refreshSubject = this.service.$libraryRefreshed.subscribe( update => {
       this.loadCuecard();
       this.loadCuecardContent();
@@ -69,6 +87,71 @@ export class CuecardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.refreshSubject.unsubscribe();
+
+    if (this.eventListener) {
+      document.removeEventListener('keyup', this.eventListener);
+    }
+  }
+
+  edit(cuecard: Cuecard) {
+    this.editable = 'true';
+    this.editButtonClasses=['hidden'];
+    this.saveButtonClasses=[];
+    this.playerClasses=['hidden'];
+    this.markdownClasses=['visible'];
+    //this.cuecardClasses=['hidden'];
+    this.lastUpdate = Date.now();
+    this.debounceTime = Date.now();
+
+    this.playerComponent.toggleKeyEvents();
+
+    return false;
+  }
+
+  parse(_event: Event, elem: HTMLElement) {
+    let time = Date.now();
+    if ((time - this.debounceTime < 300) && (time - this.lastUpdate < 2000)) {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
+      this.timer = setTimeout(this.updatePreview, 500, elem);
+      return;
+    }
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.updatePreview(elem);
+  }
+
+  private updatePreview(elem: HTMLElement) {
+    let time = Date.now();
+    this.debounceTime = time;
+    this.lastUpdate = time;
+    let markdown = marked(elem.innerText);
+
+    document.getElementById('cuecard').innerHTML = markdown;
+  }
+
+  saveCuecard(cuecard: Cuecard) {
+    this.editable = 'false';
+    this.editButtonClasses=[];
+    this.saveButtonClasses=['hidden'];
+    this.playerClasses=[];
+    this.markdownClasses=['hidden'];
+    //this.cuecardClasses=[];
+
+    this.playerComponent.toggleKeyEvents();
+
+    let content = document.getElementById('markdown').innerText;
+
+    if (cuecard.content != content) {
+      this.service.updateContent(cuecard.uuid, content).subscribe(_ => {
+        this.loadCuecardContent();
+        cuecard.content = content;
+      })
+    }
+    
+    
+    return false;
   }
 
   private loadCuecard() {
@@ -86,6 +169,8 @@ export class CuecardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.headlines = marks.headlines;
         }
       }
+
+      document.getElementById('markdown').innerText = cuecard.content.toString();
     }, (_) => {
       this._logError("Unable to load cuecard!");
     });
@@ -93,15 +178,18 @@ export class CuecardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private loadCuecardContent() {
     this.service.getCuecardContent(this.uuid).subscribe(content => {
-      document.getElementById('cuecard').innerHTML = content.toString();
-
-      let headlines = document.querySelectorAll('#cuecard > h1');
-
-      headlines.forEach(headline => headline.addEventListener('dblclick', this.startAtHeadline.bind(this)));
-      
+      this.updateContent(content);
     }, (_) => {
       this._logError("Unable to load cuecard content.");
     });
+  }
+
+  private updateContent(content: String) {
+    document.getElementById('cuecard').innerHTML = content.toString();
+
+    let headlines = document.querySelectorAll('#cuecard > h1');
+
+    headlines.forEach(headline => headline.addEventListener('dblclick', this.startAtHeadline.bind(this)));
   }
 
   onPlayerStateChanged(event: PlayerEvent) {

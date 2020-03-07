@@ -65,6 +65,19 @@ export class CuecardService {
     return this.http.post<String>('/v2/cuecards/' + uuid + '/marks', data);
   }
 
+  updateContent(uuid: String, content: String): Observable<String> {
+    let data = {
+      content: content
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'text/html' }),
+      responseType: 'text' as 'json'
+    };
+
+    return this.http.post<String>('/v2/cuecards/' + uuid + '/content', data);
+  }
+
   refresh(): Observable<void> {
     let data = "";
 
