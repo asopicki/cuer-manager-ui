@@ -37,6 +37,10 @@ blockquote[contenteditable='true'] {
     outline: solid lightblue;
 }
 
+#markdown {
+    width: 60%;
+}
+
 .box {
     display: flex;
     justify-content: start;
