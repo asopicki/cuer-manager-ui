@@ -33,6 +33,9 @@ export class EventsComponent implements OnInit {
           this.endDate = end.toUTC().toISO();
           console.log(this.startDate, this.endDate);
         }
+      } else {
+        this.startDate = DateTime.local().minus({months: 2}).toUTC().toISO(); 
+        this.endDate = DateTime.local().plus({months: 5}).toUTC().toISO();
       }
     })
   }
@@ -58,14 +61,8 @@ export class EventsComponent implements OnInit {
     let date_end: DateTime;
 
 
-    if (this.startDate) {
-      date_start = DateTime.fromISO(this.startDate.toString()).minus({months: 1});
-      date_end = date_start.plus({months: 3});
-     
-    } else {
-      date_start = DateTime.local().minus({months: 1}); 
-      date_end = date_start.plus({months: 3});
-    }
+    date_start = DateTime.fromISO(this.startDate.toString()).minus({months: 1});
+    date_end = DateTime.fromISO(this.endDate.toString()).minus({months: 1});
 
     this.startDate = date_start.toISO();
     this.endDate = date_end.toISO();
@@ -86,14 +83,8 @@ export class EventsComponent implements OnInit {
     let date_start: DateTime;
     let date_end: DateTime;
 
-    if (this.startDate) {
-      date_start = DateTime.fromISO(this.startDate.toString()).plus({months: 1});
-      date_end = date_start.plus({months: 3});
-     
-    } else {
-      date_start = DateTime.local(); 
-      date_end = date_start.plus({months: 3});
-    }
+    date_start = DateTime.fromISO(this.startDate.toString()).plus({months: 1});
+    date_end = DateTime.fromISO(this.endDate.toString()).plus({months: 1});
 
     this.startDate = date_start.toISO();
     this.endDate = date_end.toISO();

@@ -21,6 +21,7 @@ import { TipDialogComponent, TipDialogMode } from './tip-dialog/tip-dialog.compo
 import { NotesEditorComponent } from './notes-editor/notes-editor.component';
 import { SearchDialogComponent } from '../../search/search-dialog/search-dialog.component';
 import { TipCuecard } from '../tip-cuecard';
+import { SettingsService } from 'src/app/settings.service';
 
 const urls = {
   'cuecard_data': '/cuecard/'
@@ -40,14 +41,20 @@ export class EventDetailsComponent implements OnInit {
   rhythmChartLabels: Label[]
   rhythmChartLegend = false
   rhythmChartData: ChartDataSets[]
+  minutesPerTip: number = 15
 
   constructor(
     private route: ActivatedRoute,
     private eventService: EventService, 
     private programService: ProgramService, 
     private tipService: TipService,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private settingsService: SettingsService
+  ) {
+    this.settingsService.getSettings().subscribe(settings => {
+      this.minutesPerTip = settings.minutes_per_tip;
+    });
+  }
 
   ngOnInit() {
     this.rhythmChartData = [
@@ -61,7 +68,9 @@ export class EventDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => this.getEvent(params.get('uuid') || '').subscribe(event => {
       this.event = event;
       this.loading = false;
-    }))
+    }));
+
+    
   }
 
   getEvent(uuid: string): Observable<Event> {
@@ -152,7 +161,7 @@ export class EventDetailsComponent implements OnInit {
       startDate = DateTime.fromJSDate(this.tips[this.tips.length-1].date_end);
     }
 
-    let endDate = startDate.plus({minutes: 15});
+    let endDate = startDate.plus({minutes: this.minutesPerTip});
 
     const dialogRef = this.dialog.open(TipDialogComponent, {
       data: {

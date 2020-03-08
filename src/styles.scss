@@ -4,6 +4,8 @@
 @import 'assets/css/maticons.css';
 @import 'sass/abstracts/variables';
 
+.cdk-overlay-container { z-index: 888; }
+
 @media screen {
     body {
 		background-color: $body;

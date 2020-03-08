@@ -19,8 +19,9 @@ export class HomeComponent implements OnInit {
   constructor(private eventService: EventService, private dialog: MatDialog) { }
 
   getEvents() {
-    // @TODO: Get next events based on date (-1 month, +3 months)
-    return this.eventService.getEvents().subscribe(events => this.events = events.slice(0,8));
+    let date_start = DateTime.local().minus({months: 1}).toUTC().toISO(); 
+    let date_end = DateTime.local().plus({months: 4}).toUTC().toISO();
+    return this.eventService.getEvents(date_start, date_end).subscribe(events => this.events = events.slice(0,8));
   }
 
   ngOnInit() {
